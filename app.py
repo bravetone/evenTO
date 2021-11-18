@@ -7,7 +7,7 @@ app = Flask(__name__)
 @app.route('/')
 @app.route('/home')
 def home_page():
-    return render_template('home.html')
+    return render_template('index.html')
 
 
 @app.route('/events')
@@ -20,4 +20,4 @@ def events_page():
         {'no': 3, 'name': 'Techno Event 3',
             'barcode': '231985128446', 'date': 'dd/mm/yy'}
     ]
-    return render_template('/events.html', items=items)
+    return render_template('events.html', items=items)
