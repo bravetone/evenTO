@@ -22,12 +22,12 @@ body {
 }
 ::selection {
 	color: #fff;
-	background: rgba(140, 5, 231, 0.95);
+	background: #9B59B6;
 }
 
 ::-moz-selection {
  color: #fff;
- background: rgba(140, 5, 231, 0.95);
+ background: #9B59B6;
 }
 p {
 	color: #858585;
@@ -48,8 +48,9 @@ h1, h2, h3, h4, h5, h6 {
 	animation-delay: 0s;
 }
 
-.style{
-	left: 500px;
+.style {
+	font-size: 90px;
+
 }
 .mcbook {
 	opacity: 0;
@@ -88,7 +89,7 @@ background: #9FDE32;
 display: inline-block;
 font-size: 18px;
 color: #fff;
-background: rgba(140, 5, 231, 0.95);
+background: #9B59B6;
 margin-right: 20px;
 width: 220px;
 text-align: center;
@@ -118,22 +119,22 @@ overflow:hidden;
 }
 .btn {
 	color:#fff;
-	background: rgba(140, 5, 231, 0.95);
+	background: #9B59B6;
 }
 .btn:hover {
 	 color:#fff !important;
-	background:rgba(140, 5, 231, 0.95);
+	background:#9B59B6;
 }
  a:hover {
 	
-	 color:rgba(140, 5, 231, 0.95) !important;
+	 color:#9B59B6 !important;
  }
 .btn{
 display: inline-block;
 padding: 8px 12px;
 	}
 .btn, .form-control, .team-socials i {
-	border-radius: 0px !important;
+	border-radius: 10px !important;
 }
 .form-group {
 	margin: 0 auto;
@@ -141,6 +142,7 @@ padding: 8px 12px;
 	width: 75%;
 }
 .form-control {
+
 	border: none;
 	padding: 22px 4px;
 	outline: none;
@@ -152,9 +154,13 @@ padding: 8px 12px;
 	margin-bottom: 20px;
 	background: #F5F2ED;
 	font-size: inherit;
-	border-radius: 0px !important;
+	border-radius: 10px !important;
 	width: 99%;
+
+
 }
+
+
 .button-outline {
 	-webkit-font-smoothing: antialiased;
 	display: inline-block;
@@ -163,7 +169,7 @@ padding: 8px 12px;
 	color: #fff;
 	padding: 10px 25px;
 	border: 2px solid #fff;
-	border-radius: 0px;
+	border-radius: 10px;
 	font-size: 16px;
 	font-weight: 400;
 	background: rgba(255,255,255,0.15);
@@ -173,7 +179,7 @@ padding: 8px 12px;
 	background: rgba(255,255,255,0.35);
 }
 a {
-	color: rgba(140, 5, 231, 0.95);
+	#9B59B6;
 	text-decoration: none;
 	text-shadow: none;
 	-webkit-transition: all 0.2s linear;
@@ -191,7 +197,7 @@ a:hover {
 	border-radius: 0px;
 }
 .btn-primary {
-	background: rgba(140, 5, 231, 0.95);
+	background: #9B59B6;
 }
 .form-control {
 	border-radius: 0px;
@@ -215,7 +221,7 @@ border-top: 1px solid #1D1D1D;
 	z-index: 5;
 }
 .topHome:hover{
-color:rgba(140, 5, 231, 0.95);
+color:#9B59B6;
 	}
 /* Header 
 ----------------------------------------------*/
@@ -249,6 +255,15 @@ color:rgba(140, 5, 231, 0.95);
 	border-radius: 0;
 	top: 0px; 
 }
+
+.header img {
+  float: left;
+  width: 100px;
+  height: 100px;
+
+}
+
+
 .addBg {
 	background: rgba(5, 5, 5, 0.94);
 	transition: all 0.3s linear;
@@ -260,14 +275,14 @@ color:rgba(140, 5, 231, 0.95);
 	background: transparent;
 }
 .navbar-inverse .navbar-toggle {
-	background-color:rgba(140, 5, 231, 0.95);
+	background-color:#9B59B6;
 }
 .navbar-inverse .navbar-toggle .icon-bar {
 /*background-color: #5c00ff;*/
 ;
 }
 .navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus {
-	background: rgba(140, 5, 231, 0.95);
+	background: #9B59B6;
 }
 .navbar-inverse .navbar-nav > li > a:hover, .navbar-inverse .navbar-nav > li > a:focus {
 	color: #fff;
@@ -293,7 +308,7 @@ color:rgba(140, 5, 231, 0.95);
 /*.carousel-inner*/
 #myCarousel {
 	margin-top: 50px;
-	border-bottom: 4px solid rgba(140, 5, 231, 0.95);
+	border-bottom: 4px solid #9B59B6;
 }
 .carousel-inner > .item {
 }
@@ -320,7 +335,7 @@ color:rgba(140, 5, 231, 0.95);
 }
 .actionPanel {
 	padding: 25px 0;
-	background: rgba(140, 5, 231, 0.95);
+	background: #9B59B6;
 }
 .actionPanel h3 {
 	margin: 0px;
@@ -330,7 +345,7 @@ color:rgba(140, 5, 231, 0.95);
 	height: 90px;
 	width: 90px;
 	border-radius: 0px;
-	color: rgba(140, 5, 231, 0.95);
+	#9B59B6;
 	line-height: 90px !important;
 }
 #section-strapline {
@@ -346,7 +361,7 @@ color:rgba(140, 5, 231, 0.95);
 	height: 50px;/*color:#5c00ff;*/
 }
 .navbar-brand b {
-	color: rgba(140, 5, 231, 0.95);
+	#9B59B6;
 	font-family: 'Oswald', sans-serif;
 	font-weight: 900;
 }
@@ -418,7 +433,7 @@ color:rgba(140, 5, 231, 0.95);
 	font-weight: 200;
 }
 .page-section h2 {
-	color: rgba(140, 5, 231, 0.95);
+	#9B59B6;
 }
 .page-section p {
 	font-size: 15px;
@@ -428,7 +443,7 @@ color:rgba(140, 5, 231, 0.95);
 	background: #000;
 }
 .darkBg .fa {
-	color: rgba(140, 5, 231, 0.95);
+	#9B59B6;
 }
 /*--- Banner ----*/
 .banner-container {
@@ -463,11 +478,12 @@ bottom: 0px;
 }
 .hero-text h1 {
 	color: #fff;
-	font-size: 6.5em;
+
 	margin: 2% 0 30px;
 	line-height: 50px;  
 	font-size: 48px;
-	margin: 37px 0 13px; 
+	margin: 37px 0 13px;
+	font-family: 'Oswald'
 }
 .hero-text p {
 	font-size: 1.6em;
@@ -497,7 +513,7 @@ a.arrow-link:hover {
 	color: #fff;
 }
 .colord {
-	background:rgba(140, 5, 231, 0.95);
+	background:#9B59B6;
 }
 .colord p {
 	color:#FFE4F8;
@@ -572,7 +588,7 @@ a.arrow-link:hover {
 	margin: 3px;
 	cursor: pointer;
 	box-shadow: 1px 1px 1px rgba(0,0,0,0.1) inset, 1px 1px 1px rgba(255,255,255,0.1);
-	border: 2px solid rgba(140, 5, 231, 0.95);
+	border: 2px solid #9B59B6;
 }
 img, video, iframe, embed, object {
 	max-width: 100%;
@@ -689,11 +705,11 @@ img, video, iframe, embed, object {
 	margin: 2px;
 }
 #contactUs {
- background:rgba(140, 5, 231, 0.95);
+ background:#9B59B6;
 }
 #contactUs .btn {
 	border-radius: 0px !important;
-	background: rgba(140, 5, 231, 0.95);
+	background: #9B59B6;
 }
 .descrition {
 	min-height: 90px;
@@ -727,7 +743,7 @@ img, video, iframe, embed, object {
 }
 /* --Portfolio----- */
 #work {
-	background: rgba(140, 5, 231, 0.95);
+	background: #9B59B6;
 	color: #fff;
 }
 #work h2 {
@@ -814,11 +830,11 @@ nav#filter li {
 nav#filter a {
 	padding: 4px 12px;
 	line-height: 20px;
-	border: 1px solid rgba(140, 5, 231, 0.95);
+	border: 1px solid #9B59B6;
 	text-decoration: none;
 }
 .current {
-	background: rgba(140, 5, 231, 0.95);
+	background: #9B59B6;
 	color: #fff;
 } 
 .page-section.intro {
@@ -907,7 +923,7 @@ footer {
 .social a {
 	font-size: 32px;
 	margin: 0 10px;
-	color:rgba(140, 5, 231, 0.95);
+	color:#9B59B6;
 }
 .contact ul li {
 	margin-bottom: 10px;
@@ -970,7 +986,7 @@ border-radius: 0px;
 border: 1px solid #333;
 }
 footer .col.col-social-icons i:hover{
-color:rgba(140, 5, 231, 0.95);
+color:#9B59B6;
 }
 footer input.form-control{
 	padding: 18px 10px;
@@ -1292,7 +1308,7 @@ nav#filter li {
 	transform: scale(1.1);
 }
 .flat .plan.featured:hover li.plan-name, .flat .plan:hover li.plan-name, .flat .plan.featured.plan-name {
-	background:rgba(140, 5, 231, 0.95) !important;
+	background:#9B59B6 !important;
 }
 .customNavigation {
 	display: none;
