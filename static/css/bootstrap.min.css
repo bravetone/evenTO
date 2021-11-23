@@ -339,7 +339,8 @@ tr {
 }
 
 label {
-    display: inline-block
+    display: inline-block;
+    color: white;
 }
 
 button {
@@ -2235,6 +2236,7 @@ progress {
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
+
     color: #212529;
     background-color: #fff;
     background-clip: padding-box;
@@ -2245,6 +2247,8 @@ progress {
     border-radius: .25rem;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out
 }
+
+
 
 @media (prefers-reduced-motion:reduce) {
     .form-control {
@@ -3097,6 +3101,8 @@ textarea.form-control.is-invalid {
     color: #212529
 }
 
+
+
 .btn-check:focus+.btn,
 .btn:focus {
     outline: 0;
@@ -3112,8 +3118,14 @@ fieldset:disabled .btn {
 
 .btn-primary {
     color: #fff;
-    background-color: #0d6efd;
-    border-color: #0d6efd
+    background-color: #6f42c1;
+    border-color: #6f42c1
+}
+.btn-register {
+    margin-top: 10px;
+    color: #fff;
+    background-color: #6f42c1;
+    border-color: #6f42c1
 }
 
 .btn-primary:hover {

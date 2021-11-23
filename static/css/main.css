@@ -886,11 +886,13 @@ ol {
   }
 }
 
+
+
 /* Bread Crumbs */
 .breadcrumbs {
   position: relative;
-  padding-bottom: 45px;
-  padding-top: 140px;
+  padding-bottom: -8px;
+  padding-top: 101px;
   background: #081828;
   z-index: 2;
   text-align: left;
@@ -4433,17 +4435,53 @@ blockquote .shape {
   background-attachment: fixed;
 }
 
+.call-register{
+  background-image: url("../images/hero/cr.jpg");
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: relative;
+  z-index: 9;
+  padding: 150px 0;
+  background-attachment: fixed;
+
+}
+
 .call-action.overlay::before {
-  background-color: #081828;
+  background-color: #091827;
   opacity: 0.8;
   z-index: -1;
 }
+
+
+.call-register.overlay::before {
+  background-color: #081828;
+  opacity: 1;
+  z-index: -1;
+}
+
+
+
 
 .call-action .content {
   text-align: center;
 }
 
+.call-register .content {
+  text-align: center;
+}
+
+
 .call-action .content h2 {
+  font-size: 35px;
+  font-weight: 600;
+  line-height: 52px;
+  color: #fff;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.call-register .content h2 {
   font-size: 35px;
   font-weight: 600;
   line-height: 52px;
@@ -4458,15 +4496,30 @@ blockquote .shape {
   color: #fff;
 }
 
+.call-register .content p {
+  font-size: 16px;
+  font-weight: 400;
+  color: #fff;
+}
+
 .call-action .content .button {
   margin-top: 30px;
 }
+
+.call-register .content .button {
+  margin-top: 30px;
+}
+
 
 .call-action .content .button .btn:hover {
   color: #081828;
   background: #fff;
 }
 
+.call-register .content .button .btn:hover {
+  color: #081828;
+  background: #fff;
+}
 
 /*======================================
     Responsive CSS
@@ -5151,6 +5204,9 @@ blockquote .shape {
     font-size: 28px;
   }
 
+    .call-register .content h2 {
+    font-size: 28px;
+  }
   .ads-tab .nav {
     border: none;
     margin: 0 !important;
@@ -5335,7 +5391,10 @@ blockquote .shape {
   .comment-form {
     padding: 30px;
   }
-
+  .comment-form-register {
+    padding: 30px;
+    color: #fff;
+  }
   .comment-form form .form-box .form-control-custom {
     height: 50px;
     margin-bottom: 15px;
@@ -5961,6 +6020,11 @@ blockquote .shape {
 
 .contact-us .form-main .form-title p {
   font-size: 16px;
+}
+
+.form-group {
+	margin: 0 550px;
+	width: 50%;
 }
 
 .contact-us .form .form-group {
