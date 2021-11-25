@@ -169,6 +169,9 @@ def business():
 def about():
     return render_template('about.html')
 
+@app.route('/event')
+def events():
+    return render_template('event.html')
 
 @app.errorhandler(404)
 def page_not_found(e):
