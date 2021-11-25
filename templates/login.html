@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="breadcrumbs">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6 col-12">
+                    <div class="breadcrumbs-content">
+                        <h1 class="page-title">Login</h1>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-12">
+                    <ul class="breadcrumb-nav">
+                        <li><a href="/">Home</a></li>
+                        <li>Login</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <section id="login" class="call-register overlay section">
+        <h1 style="text-align:center; color:white">Login</h1>
+        <div class="search-form wow fadeInUp" data-wow-delay=".7s" style="background: none;">
+            <div class="row">
+
+                <div class="col-lg-4 col-md-4 col-12 p-0">
+                    <form method="post">
+                        {{ form.username.label }} {{ form.username() }}
+                        {{ form.password.label }} {{ form.password() }}
+                        {{ form.hidden_tag() }}
+                        {% for error in form.submit.errors %}
+                            {{ error }}
+                        {% endfor %}
+                        {{ form.submit() }}
+                    </form>
+                </div>
+            </div>
+    </section>
+
+
+    {% include 'bottom.html' %}
+
+    <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
+
+
+    <script src="{{ url_for('static',filename='js/wow.min.js') }}"></script>
+
+    <script src="{{ url_for('static',filename='js/tiny-slider.js') }}"></script>
+
+
+
+    <script src="{{ url_for('static',filename='js/glightbox.min.js') }}"></script>
+
+
+
+    <script src="{{ url_for('static',filename='js/main.js') }}"></script>
+
+{% endblock content %}
