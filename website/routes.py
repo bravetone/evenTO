@@ -1,10 +1,17 @@
-import os
 from website import app
-from flask import render_template, flash, redirect, url_for, session
+from flask import render_template, flash, redirect, url_for
 from website.model import User, Events, Role
 from website.form import *
 from website import db
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
+
+
+@app.before_first_request
+def create_db():
+    db.drop_all()
+    db.create_all()
+    # user_query = User.query.filter_by(username="admin").first()
+    # print(user_query.name)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -12,19 +19,18 @@ def register_page():
     form = RegisterForm()
     if form.validate_on_submit():
         username = form.username.data
-        role_name = Role.query.filter_by(role_name="User").first()
+
         password_hash = form.password.data
         new_user = User(name=form.name.data,
                         family_name=form.family_name.data,
                         username=form.username.data,
-                        email=form.mail.data,
+                        mail=form.mail.data,
                         password=password_hash,
-                        role_name=role_name)
+                        )
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
         flash('Account created successfully! You are now logged in as {}'.format(new_user.username),category='success')
-        flash('Registered successfully.')
         return redirect(url_for('login_page'))
     if form.errors != {}:  #if there are no errors from the validations
         for err_msg in form.errors.values():

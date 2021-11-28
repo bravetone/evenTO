@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="website_flask" uuid="2edb3c31-943d-466b-92bd-05999a6ab77b">
+    <data-source source="LOCAL" name="evenTO" uuid="df1dc5e3-1ddd-4192-9b38-6982f53babed">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/website_flask.db</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-    <data-source source="LOCAL" name="evenTO" uuid="3ce4a81c-6845-42d5-99aa-391ec30dc2c3">
-      <driver-ref>sqlite.xerial</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/evenTO.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/website/evenTO.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
       <libraries>
         <library>

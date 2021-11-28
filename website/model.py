@@ -1,11 +1,6 @@
 from website import db, login_manager
 from website import bcrypt
-
 from flask_login import UserMixin
-from wtforms.validators import DataRequired, Length, ValidationError, Email, EqualTo, Length, Optional
-
-
-from werkzeug.security import check_password_hash, generate_password_hash
 
 
 def printf(x):
@@ -32,10 +27,10 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(100), nullable=False)
     family_name = db.Column(db.String(100), nullable=False)
     username = db.Column(db.String(100), unique=True, index=True)
-    email = db.Column(db.String(100), unique=True, index=True)
+    mail = db.Column(db.String(100), unique=True, index=True)
     password_hash = db.Column(db.String(200), nullable=False)
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    events = db.relationship('Events', backref='owned_user', lazy=True)
+    #role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    #events = db.relationship('Events', backref='owned_user', lazy=True)
 
     @property
     def password(self):
@@ -53,7 +48,7 @@ class Role(db.Model):
     __tablename__ = "roles"
     id = db.Column(db.Integer, primary_key=True)
     role_name = db.Column(db.String(100), nullable=False)
-    users = db.relationship('User', backref='role_name')
+    #users = db.relationship('User', backref='role_name')
 
 
 class Events(db.Model):
