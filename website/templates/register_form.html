@@ -34,6 +34,7 @@
 
           <div class="col-lg-4 col-md-4 col-12 p-0">
             <form method="post">
+                 {{ form.hidden_tag() }}
                 <div class="control-group form-group" >
                     <div class="controls">
                         {{ form.name.label }} {{ form.name(class='form-control'  ) }}

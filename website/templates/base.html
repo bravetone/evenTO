@@ -70,21 +70,38 @@
                                      <li class="nav-item active"><a href="/business">Business </a></li>
                                      <li class="nav-item active"><a href="/about">About Us </a></li>
                                 </ul>
-                            </div> <!-- navbar collapse -->
-                            <div class="login-button">
+                            </div>
+                             {% if current_user.is_authenticated %}
+                                 <div class="login-button">
                                 <ul>
                                     <li>
-                                        <a href="/login"><i class="lni lni-enter"></i> Login</a>
+                                        <a class="lni lni-enter"> Welcome,  {{current_user.username  }}</a>
                                     </li>
                                     <li>
-                                        <a href="/register"><i class="lni lni-user"></i> Register</a>
+                                        <a href="/logout"><i class="lni lni-enter"></i> Logout</a>
                                     </li>
+
                                 </ul>
                             </div>
                             <div class="button header-button">
-                                <a href="javascript:void(0)" class="btn">Post an event</a>
+                                <a href="/post" class="btn">Post an event</a>
                             </div>
-                        </nav> <!-- navbar -->
+
+                             {% else %}
+                               <div class="login-button">
+                                 <ul>
+                                     <li>
+                                        <a href="/login"><i class="lni lni-enter"></i> Login</a>
+                                     </li>
+                                     <li>
+                                        <a href="/register"><i class="lni lni-user"></i> Register</a>
+                                     </li>
+                                 </ul>
+                               </div>
+                            {% endif %}<!-- navbar collapse -->
+
+                        </nav>
+                         <!-- navbar -->
                     </div>
                 </div>
             </div> <!-- row -->
