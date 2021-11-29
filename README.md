@@ -1,5 +1,15 @@
 # evenTO Update
 
+##### 29/11/2021
+model.py update
+
+
+
+
+
+
+
+
 ##### 28/11/2021
 ###### BIG CHANGES
 I changed the whole file structure. Now, everything is inside `website`.
