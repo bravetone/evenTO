@@ -1,17 +1,26 @@
 from website import app
-from flask import render_template, flash, redirect, url_for
-from website.model import User, Events, Role
+import os
+from flask import render_template, flash, redirect, url_for, request, Response
+from website.model import User, Event, Role, Img
 from website.form import *
 from website import db
 from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.utils import secure_filename
 
 
-@app.before_first_request
-def create_db():
-    db.drop_all()
-    db.create_all()
+#@app.before_first_request
+#def create_db():
+#    db.drop_all()
+#    db.create_all()
     # user_query = User.query.filter_by(username="admin").first()
     # print(user_query.name)
+
+
+@app.route('/post', methods=['GET', 'POST'])
+@login_required
+def post_events():
+
+    return render_template('post_event.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -66,22 +75,22 @@ def logout_page():
 # Upload images
 
 
-'''@app.route("/upload", methods=["POST", "GET"])
+@app.route('/upload', methods=['POST'])
 def upload():
-    if not (session.get("username")) and session.get("username") == None:
-        return redirect(url_for("login_page"))
-    folder_name = str(session.get('username'))
-    if not os.path.exists('static/' + str(folder_name)):
-        os.makedirs('static/' + str(folder_name))
-    file_url = os.listdir('static/' + str(folder_name))
-    file_url = [str(folder_name) + "/" + file for file in file_url]
-    formupload = UploadForm()
-    print folder_name
-    if formupload.validate_on_submit():
-        filename = photos.save(formupload.file.data,
-                               name=folder_name + '.jpg', folder=folder_name)
-        file_url.append(filename)
-    return render_template("post_event.html", formupload=formupload, filelist=file_url) '''
+    pic = request.files['pic']
+    if not pic:
+        return 'No pic uploaded!', 400
+
+    filename = secure_filename(pic.filename)
+    mimetype = pic.mimetype
+    if not filename or not mimetype:
+        return 'Bad upload!', 400
+
+    img = Img(img=pic.read(), name=filename, mimetype=mimetype)
+    db.session.add(img)
+    db.session.commit()
+
+    return 'Img Uploaded!', 200
 
 
 @app.route('/')
@@ -101,8 +110,8 @@ def about():
 
 @app.route('/event')
 def events():
-    event = Events.query.all()
-    return render_template('event.html',event=event)
+    event = Event.query.all()
+    return render_template('event.html', event=event)
 
 
 @app.errorhandler(404)
@@ -115,11 +124,7 @@ def internal_server_error(e):
     return render_template('500.html'), 500
 
 
-@app.route('/post')
-@login_required
-def post_events():
 
-    return render_template('post_event.html')
 
 
 
