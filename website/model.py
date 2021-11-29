@@ -21,31 +21,6 @@ def unauthorized():
     return "You are not logged in. Click here to get <a href="+ str("/login")+">back to Login Page</a>"
 
 
-class User(db.Model, UserMixin):
-    __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    family_name = db.Column(db.String(100), nullable=False)
-    username = db.Column(db.String(100), unique=True, index=True)
-    mail = db.Column(db.String(100), unique=True, index=True)
-    password_hash = db.Column(db.String(200), nullable=False)
-    #role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    events = db.relationship('Event', backref='events', lazy=True)
-    review = db.relationship('Review', backref='review', lazy=True)
-    #user owns the events, user owns the review
-
-    @property
-    def password(self):
-        return self.password
-
-    @password.setter
-    def password(self, plain_text_password):
-        self.password_hash = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
-
-    def check_password_correction(self,attempted_password):
-        return bcrypt.check_password_hash(self.password_hash, attempted_password)
-
-
 class Event(db.Model):
     __tablename__ = "event"
     id = db.Column(db.Integer, primary_key=True)
@@ -94,5 +69,64 @@ class Reservation(db.Model):
 
 class Subscription(db.Model):
     __tablename__ = 'subscription'
+    id = db.Column(db.Integer, primary_key=True)
+    sub_id = db.Column(db.Integer, db.ForeignKey('users.id'), index=True, nullable=False)
+    sub_type = db.Column(db.Integer, primary_key=True)
+
+    def get_member_username(self):
+        return User.query.get(self.sub_id).username
 
 
+class USER:
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    family_name = db.Column(db.String(100), nullable=False)
+    username = db.Column(db.String(100), unique=True, index=True)
+    mail = db.Column(db.String(100), unique=True, index=True)
+    password_hash = db.Column(db.String(200), nullable=False)
+    age = db.column(db.Integer)
+    sex = db.Column(db.String(10),default='Prefer not to say')
+
+    def __init__(self):
+        return
+
+
+class EventOwner(db.Model,UserMixin,USER):
+    __tablename__='eventowner'
+    sub_type = db.Column(db.String,nullable=False, default=00)
+    events = db.relationship('Event', backref='events', lazy=True)
+
+    def __init__(self, **kwargs):
+        super(USER, self).__init__(**kwargs)
+        self.set_defaultImg()
+        self.set_file_address()
+
+    def __repr__(self):
+        return '<Event Owner {}>'.format(self.username)
+
+    # eventOwner owns the events
+
+
+class User(db.Model, UserMixin, USER):
+    __tablename__ = "users"
+    review = db.relationship('Review', backref='review', lazy=True)
+    #user owns the review
+
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        self.set_defaultImg()
+        self.set_file_address()
+
+    def __repr__(self):
+        return '<User {}>'.format(self.username)
+
+    @property
+    def password(self):
+        return self.password
+
+    @password.setter
+    def password(self, plain_text_password):
+        self.password_hash = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
+
+    def check_password_correction(self, attempted_password):
+        return bcrypt.check_password_hash(self.password_hash, attempted_password)
