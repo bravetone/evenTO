@@ -18,51 +18,81 @@
         </div>
   </div>
 
-<form>
-  <div class="form-row">
-    <div class="form-group col-md-6">
-      <label for="inputEmail4">Email</label>
-      <input type="email" class="form-control" id="inputEmail4" placeholder="Email">
+<form method="post" enctype="multipart/form-data" action="">
+   {{ form.hidden_tag() }}
+  <div class="search-form wow fadeInUp" data-wow-delay=".7s" style="background: none; margin-top:50px; margin-bottom:50px">
+
+    <div class="form-group">
+      <label for="Title" style="color: black" >Event Title</label>
+      {{ formupload.label }} {{ formupload.title(class='form-control' )}}
+     <!-- <input type="text" class="form-control" id="Title" placeholder="Polito Cafe" > -->
+
     </div>
+
+
     <div class="form-group col-md-6">
-      <label for="inputPassword4">Password</label>
-      <input type="password" class="form-control" id="inputPassword4" placeholder="Password">
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="inputAddress">Address</label>
-    <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
-  </div>
-  <div class="form-group">
-    <label for="inputAddress2">Address 2</label>
-    <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
-  </div>
-  <div class="form-row">
-    <div class="form-group col-md-6">
-      <label for="inputCity">City</label>
-      <input type="text" class="form-control" id="inputCity">
+      <label for="organizer" style="color: black" >Organizer</label>
+     <!-- <input type="text" class="form-control" id="Organizer"> -->
+
+      <div> {{ formupload.label }}  </div>
+      <div> {{ formupload.organizer._value()}}</div>
+
+
+
     </div>
     <div class="form-group col-md-4">
-      <label for="inputState">State</label>
-      <select id="inputState" class="form-control">
-        <option selected>Choose...</option>
-        <option>...</option>
-      </select>
+      <label for="inputState" style="color: black" >Type</label>
+          {{ formupload.csrf_token }}
+          {{ formupload.type }}
+          <ul>
+            {% for error in formupload.type.errors %}
+            <li style="color:red;">{{ error }}</li>
+            {% endfor %}
+          </ul>
+       <!--  <option selected>Choose...</option> -->
+       <!-- <option>Cafe</option>  -->
+        <!-- <option>Restaurant</option> -->
+       <!--  <option>Club</option> -->
+       <!-- <option>Exhibition</option> -->
+
     </div>
-    <div class="form-group col-md-2">
-      <label for="inputZip">Zip</label>
-      <input type="text" class="form-control" id="inputZip">
+    <div class="form-group col-md-6">
+      <label for="description" style="color: black" >Description</label>
+      {{ formupload.label }} {{ formupload.description(class='form-control' )}}
+      <!--<input type="text" class="form-control" id="desc"> -->
     </div>
+    <div class="form-group col-md-6">
+      <label for="starting_price" style="color: black" >Starting Price</label>
+      {{ formupload.label }} {{ formupload.price(class='form-control' )}}
+      <!-- <input type="text" class="form-control" id="Price"> -->
+    </div>
+      <div class="form-group">
+        <label for="inputAddress2" style="color: black" >Address</label>
+       <!-- <input type="text" class="form-control" id="Address" placeholder="Corso Duca degli Abruzzi, 24"> -->
+        {{ formupload.label }} {{ formupload.address(class='form-control' )}}
+     </div>
+    <div class="form-group">
+       <div class="form-check">
+         <input class="form-check-input" type="checkbox" id="gridCheck">
+         <label class="form-check-label" for="gridCheck" style="color: black">
+          I agree to the Terms of Service and Privacy Policy
+          </label>
+        </div>
+    </div>
+    <div class="form-group">
+        {{ formupload.file.label }}
+        {{ formupload.file }}
+        {{ formupload.upload }}
+        {% for file in filelist %}
+            <img class="upload-img"  src='{{ url_for("static",filename=file) }}' alt="">
+        {% endfor %}
+    </div>
+
+    <div class="form-group">
+       <button type="submit" class="btn btn-primary" >Post the event</button>
+    </div>
+
   </div>
-  <div class="form-group">
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" id="gridCheck">
-      <label class="form-check-label" for="gridCheck">
-        Check me out
-      </label>
-    </div>
-  </div>
-  <button type="submit" class="btn btn-primary">Sign in</button>
 </form>
 
   {% include "bottom.html" %}
