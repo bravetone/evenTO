@@ -1,5 +1,11 @@
 # evenTO Update
 
+##### 1/12/2021
+
+Categories model added and I have added 4 categories to the database. When a user want to post an event they have to choose from the given types.
+
+
+
 ##### 29/11/2021
 model.py update
 
