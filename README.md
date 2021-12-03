@@ -2,15 +2,15 @@
 
 ##### 2/12/2021
 Added:
-*EventOwner model
-*User model
-*Follower model
-*Registration model
-*Role model --> Admin,User,EventOwner,Moderator [STILL NEED TO IMPLEMENT]
-*Post an event section still not working (Not Posting)
-*form.py fixed
-*edit event page ready I guess?
-*pagination to the event page
+* EventOwner model
+* User model
+* Follower model
+* Registration model
+* Role model --> Admin,User,EventOwner,Moderator [STILL NEED TO IMPLEMENT]
+* Post an event section still not working (Not Posting)
+* form.py fixed
+* edit event page ready I guess?
+* pagination to the event page
 
 But without posting, nothing really matters. We need to post 
 
