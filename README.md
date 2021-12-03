@@ -1,5 +1,22 @@
 # evenTO Update
 
+##### 2/12/2021
+Added:
+*EventOwner model
+*User model
+*Follower model
+*Registration model
+*Role model --> Admin,User,EventOwner,Moderator [STILL NEED TO IMPLEMENT]
+*Post an event section still not working (Not Posting)
+*form.py fixed
+*edit event page ready I guess?
+*pagination to the event page
+
+But without posting, nothing really matters. We need to post 
+
+
+
+
 ##### 1/12/2021
 
 Categories model added and I have added 4 categories to the database. When a user want to post an event they have to choose from the given types.
