@@ -30,7 +30,7 @@ class Reservation(db.Model):  # users reserve events [many-to-many relationships
 
 class Follow(db.Model):  # users following events [many-to-many relationships]
     __tablename__ = 'follows'
-    id = db.Column(db.Integer,  # need to figure out how QR code can be stored
+    id = db.Column(db.Integer,
                    primary_key=True,
                    index=True)
     follower_id = db.Column('Users', db.Integer, db.ForeignKey('users.id'))

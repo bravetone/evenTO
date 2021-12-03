@@ -143,13 +143,16 @@ def post_events():
     file_url = os.listdir('static/' + str(session.get('id')))
     file_url = [str(session.get('id')) + "/" +
                 file for file in file_url]
+
     formupload = UploadForm()
+
     eventowner = current_user.username
     formupload.organizer.data = eventowner
     event = Event(owner=formupload.organizer.data)
+
     if formupload.validate_on_submit():
         event = Event(title=formupload.title.data,
-                      owner = eventowner,
+                      owner=eventowner,
                       type=formupload.type.data,
                       description=formupload.description.data,
                       price=formupload.price.data,
