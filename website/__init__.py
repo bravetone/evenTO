@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Message, Mail
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
-
+import pytest
 
 
 
@@ -21,18 +21,22 @@ from werkzeug import secure_filename, FileStorage
 
 
 app = Flask(__name__)
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SECRET_KEY'] = 'potato'
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///evenTO.db"
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 # EMAIL config
-app.config['MAIL_USERNAME'] = ""  # os.environ['EMAIL_USERNAME']
-app.config['MAIL_PASSWORD'] = ""
+app.config['MAIL_USERNAME'] = "os.environ['EMAIL_USERNAME']"
+app.config['MAIL_PASSWORD'] = "os.environ['EMAIL_PASSWORD']"
 app.config['MAIL_TLS'] = True
 app.config['MAIL_SERVER'] = 'smtp.mail.com'
 app.config['MAIL_PORT'] = 587
 # Upload Configuration
 app.config['UPLOADED_PHOTOS_DEST'] = os.getcwd() + "/static"
+app.config['FLASKY_POSTS_PER_PAGE'] = 10
+app.config['FLASKY_ADMIN'] = os.environ.get('FLASKY_ADMIN')
+
 
 db = SQLAlchemy(app)
 # MAIL
@@ -52,3 +56,6 @@ patch_request_class(app)
 
 
 from website import routes
+
+
+
