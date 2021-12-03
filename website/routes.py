@@ -1,28 +1,50 @@
-from website import app
 import os
-from flask import render_template, flash, redirect, url_for, request, Response
-from website.model import User, Event, Role, Img
-from website.form import *
-from website import db
+from functools import wraps
+
+from flask import render_template, flash, redirect, url_for, session, current_app, abort, request, make_response
 from flask_login import login_user, logout_user, login_required, current_user
-from werkzeug.utils import secure_filename
+
+from website import app, photos
+from website import db
+from website.form import RegisterForm, SearchForm, UploadForm, LoginForm
+from website.model import User, Event, Permission
 
 
 #@app.before_first_request
 #def create_db():
 #    db.drop_all()
 #    db.create_all()
-    # user_query = User.query.filter_by(username="admin").first()
-    # print(user_query.name)
 
 
-@app.route('/post', methods=['GET', 'POST'])
-@login_required
-def post_events():
+def permission_required(permission):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not current_user.can(permission):
+                abort(403)
+            return f(*args, **kwargs)
 
-    return render_template('post_event.html')
+        return decorated_function
+
+    return decorator
 
 
+def admin_required(f):
+    return permission_required(Permission.ADMINISTER)(f)
+
+
+@app.context_processor
+def base():
+    form = SearchForm()
+    return dict(form=form)
+
+
+@app.context_processor
+def inject_permissions():
+    return dict(Permission=Permission)
+
+
+# AUTHORIZATION
 @app.route('/register', methods=['GET', 'POST'])
 def register_page():
     form = RegisterForm()
@@ -39,11 +61,11 @@ def register_page():
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
-        flash('Account created successfully! You are now logged in as {}'.format(new_user.username),category='success')
-        return redirect(url_for('login_page'))
-    if form.errors != {}:  #if there are no errors from the validations
+        flash('Account created successfully! You are now logged in as {}'.format(new_user.username), category='success')
+        return redirect(url_for('index'))
+    if form.errors != {}:  # if there are no errors from the validations
         for err_msg in form.errors.values():
-            flash('There was an error with creating a user: {}'.format(err_msg),category='danger')
+            flash('There was an error with creating a user: {}'.format(err_msg), category='danger')
     return render_template('register_form.html', form=form)
 
 
@@ -66,36 +88,135 @@ def login_page():
 
 @app.route("/logout")
 def logout_page():
-    
     """User log-out logic."""
     logout_user()
     flash("You have been logged out!", category='info')
     return redirect(url_for('index'))
-# Create a route for Upload request
-# Upload images
 
 
-@app.route('/upload', methods=['POST'])
-def upload():
-    pic = request.files['pic']
-    if not pic:
-        return 'No pic uploaded!', 400
-
-    filename = secure_filename(pic.filename)
-    mimetype = pic.mimetype
-    if not filename or not mimetype:
-        return 'Bad upload!', 400
-
-    img = Img(img=pic.read(), name=filename, mimetype=mimetype)
-    db.session.add(img)
-    db.session.commit()
-
-    return 'Img Uploaded!', 200
-
-
-@app.route('/')
+# MAIN PAGES
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    formupload = UploadForm()
+
+    return render_template('index.html', formupload=formupload)
+
+
+@app.route('/search', methods=["POST"])
+def search():
+    form = SearchForm()
+    events = Event.query.order_by(Event.date_posted)
+    if form.validate_on_submit():
+        # Get data from submitted form
+        event.searched = form.searched.data
+        # Query the Database
+        events = events.filter(Event.title.like('%' + event.searched + '%'))
+        posts = events.order_by(Event.title).all()
+
+        return render_template("search.html",
+                               form=form,
+                               searched=event.searched,
+                               events=events)
+
+
+@app.route('/all')
+@login_required
+def show_all():
+    resp = make_response(redirect(url_for('.events')))
+    resp.set_cookie('show_followed', '', max_age=30 * 24 * 60 * 60)
+    return resp
+
+
+@app.route('/followed')
+@login_required
+def show_followed():
+    resp = make_response(redirect(url_for('.events')))
+    resp.set_cookie('show_followed', '1', max_age=30 * 24 * 60 * 60)
+    return resp
+
+
+@app.route('/event/new', methods=['GET', 'POST'])
+@login_required
+def post_events():
+    if not os.path.exists('static/' + str(session.get('id'))):
+        os.makedirs('static/' + str(session.get('id')))
+    file_url = os.listdir('static/' + str(session.get('id')))
+    file_url = [str(session.get('id')) + "/" +
+                file for file in file_url]
+
+    formupload = UploadForm()
+
+    eventowner = current_user.username
+    formupload.organizer.data = eventowner
+    event = Event(owner=formupload.organizer.data)
+
+    if formupload.validate_on_submit():
+        event = Event(title=formupload.title.data,
+                      owner=eventowner,
+                      type=formupload.type.data,
+                      description=formupload.description.data,
+                      price=formupload.price.data,
+                      location=formupload.address.data,
+                      image_file=photos.save(formupload.file.data,
+                                             name=str(session.get('id')) + '.jpg',))
+
+        # file_url.append(filename)
+        db.session.add(event)
+        # db.session.add(filename)
+        db.session.commit()
+        flash('Event Posted!')
+        return redirect(url_for('events_page'))
+    return render_template('post_event.html', formupload=formupload, event=event)
+
+
+@app.route('/event', methods=['GET', 'POST'])
+def events_page():
+    event = Event.query.order_by(Event.date_posted.desc()).all()
+    page = request.args.get('page', 1, type=int)
+    show_followed = False
+    if current_user.is_authenticated:
+        show_followed = bool(request.cookies.get('show_followed', ''))
+    if show_followed:
+        query = current_user.followed_posts
+    else:
+        query = Event.query
+    pagination = Event.query.order_by(Event.date_posted.desc()).paginate(page,
+                                                                         per_page=
+                                                                         current_app.config['FLASKY_POSTS_PER_PAGE'],
+                                                                         error_out=False
+                                                                         )
+    events = pagination.items
+    return render_template('event.html', events=events, pagination=pagination, show_followed=show_followed, event=event)
+
+
+@app.route('/event/<int:id>')
+def event(id):
+    event = Event.query.get_or_404(id)
+    return render_template('event.html', events=[event])
+
+
+@app.route('/posts/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_post(id):
+    event = Event.query.get_or_404(id)
+    if current_user != event.owner and \
+            not current_user.can(Permission.ADMINISTER):
+        abort(403)
+    form = UploadForm()
+    if form.validate_on_submit():
+        event.title = form.title.data
+        # post.author = form.author.data
+        event.content = form.type.data
+        event.content = form.location.data
+        # Update Database
+        db.session.add(event)
+        db.session.commit()
+        flash("Post Has Been Updated!")
+        return redirect(url_for('event', id=event.id))
+    form.title.data = event.title
+    form.type.data = event.type
+    form.location = event.location
+    return render_template('edit_event.html', form=form)
 
 
 @app.route('/business')
@@ -108,12 +229,6 @@ def about():
     return render_template('about.html')
 
 
-@app.route('/event')
-def events():
-    event = Event.query.all()
-    return render_template('event.html', event=event)
-
-
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
@@ -124,13 +239,6 @@ def internal_server_error(e):
     return render_template('500.html'), 500
 
 
-
-
-
-
-
-
-
-
-
-
+@app.errorhandler(403)
+def no_permission(e):
+    return render_template('403.html'), 403

@@ -12,43 +12,48 @@
                             <h2 class="wow fadeInUp" data-wow-delay=".3s">Welcome to evenTO</h2>
                             <p class="wow fadeInUp" data-wow-delay=".5s">Your local guide is here<br></p>
                         </div>
-                        <!-- End Search Form -->
+                        <!-- End Hero Text -->
                         <!-- Start Search Form -->
                         <div class="search-form wow fadeInUp" data-wow-delay=".7s">
                             <div class="row">
                                 <div class="col-lg-4 col-md-4 col-12 p-0">
-                                    <div class="search-input">
-                                        <label for="keyword"><i class="lni lni-search-alt theme-color"></i></label>
-                                        <input type="text" name="keyword" id="keyword" placeholder="Search something">
-                                    </div>
+                                    <form method="post" action="{{ url_for('search') }}">
+                                        {{ form.hidden_tag() }}
+                                        <div class="search-input">
+                                            <label for="keyword"><i class="lni lni-search-alt theme-color"></i></label>
+
+
+                                            <input type="text" name="searched" id="keyword"
+                                                   placeholder="Search something">
+
+                                        </div>
+
+
+                                    </form>
                                 </div>
                                 <div class="col-lg-3 col-md-3 col-12 p-0">
                                     <div class="search-input">
                                         <label for="category"><i class="lni lni-grid-alt theme-color"></i></label>
-                                        <select name="category" id="category">
-                                            <option value="none" selected disabled>Categories</option>
-                                            <option value="none">Restaurant</option>
-                                            <option value="none">Clubs</option>
-                                            <option value="none">Pubs</option>
-                                            <option value="none">Exhibitions</option>
-                                          
-                                        </select>
+
+                                            {{ formupload.csrf_token }}
+                                            {{ formupload.type }}
+
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-md-3 col-12 p-0">
                                     <div class="search-input">
                                         <label for="location"><i class="lni lni-map-marker theme-color"></i></label>
                                         <select name="location" id="location">
-                                            <option value="none" selected disabled>Locations</option>
-                                            <option value="none">Turin</option>
-                                            <option value="none">Istanbul</option>
-                                      
+
+                                            <option value="" selected disabled>Turin </option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-lg-2 col-md-2 col-12 p-0">
                                     <div class="search-btn button">
-                                        <button class="btn"><i class="lni lni-search-alt"></i> Search</button>
+                                        <button class="btn" type="submit"><i class="lni lni-search-alt"
+                                                                             type="submit"></i> Search
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -71,7 +76,7 @@
                             <!-- Start Single Category -->
                             <a href="category.html" class="single-cat">
                                 <div class="icon">
-                                    <img src="static/svg/utensils-solid.svg" alt="#">
+                                    <img src="/static/svg/utensils-solid.svg" alt="#">
                                 </div>
                                 <h3>Restaurants</h3>
                                 <h5 class="total">35</h5>
@@ -80,7 +85,7 @@
                             <!-- Start Single Category -->
                             <a href="category.html" class="single-cat">
                                 <div class="icon">
-                                    <img src="static/svg/glass-cheers-solid.svg" alt="#">
+                                    <img src="/static/svg/glass-cheers-solid.svg" alt="#">
                                 </div>
                                 <h3>Clubs</h3>
                                 <h5 class="total">22</h5>
@@ -89,7 +94,7 @@
                             <!-- Start Single Category -->
                             <a href="category.html" class="single-cat">
                                 <div class="icon">
-                                    <img src="static/svg/beer-solid.svg" alt="#">
+                                    <img src="/static/svg/beer-solid.svg" alt="#">
                                 </div>
                                 <h3>Pubs</h3>
                                 <h5 class="total">55</h5>
@@ -98,7 +103,7 @@
                             <!-- Start Single Category -->
                             <a href="category.html" class="single-cat">
                                 <div class="icon">
-                                    <img src="static/svg/wine-glass-solid.svg" alt="#">
+                                    <img src="/static/svg/wine-glass-solid.svg" alt="#">
                                 </div>
                                 <h3>Exhibitions</h3>
                                 <h5 class="total">21</h5>
@@ -130,10 +135,12 @@
                         <!-- Start Single Grid -->
                         <div class="single-grid wow fadeInUp" data-wow-delay=".2s">
                             <div class="image">
-                                <a href="item-details.html" class="thumbnail"><img src="static/images/items-grid/8.png"  alt="#"></a>
+                                <a href="item-details.html" class="thumbnail"><img src="/static/images/items-grid/8.png"
+                                                                                   alt="#"></a>
                                 <div class="author">
                                     <div class="author-image">
-                                        <a href="javascript:void(0)"><img src="static/images/items-grid/author-1.jpg" alt="#">
+                                        <a href="javascript:void(0)"><img src="/static/images/items-grid/author-1.jpg"
+                                                                          alt="#">
                                             <span>Alp </span></a>
                                     </div>
                                     <p class="sale">New Listing</p>
@@ -155,8 +162,9 @@
                                         <li><a href="javascript:void(0)">(35)</a></li>
                                     </ul>
                                     <ul class="info-list">
-                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> Istanbul, TR</a></li>
-                                        
+                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> Istanbul, TR</a>
+                                        </li>
+
                                     </ul>
                                 </div>
                                 <div class="bottom-content">
@@ -167,15 +175,17 @@
                         </div>
                         <!-- End Single Grid -->
                     </div>
-                
+
                     <div class="col-lg-4 col-md-6 col-12">
                         <!-- Start Single Grid -->
                         <div class="single-grid wow fadeInUp" data-wow-delay=".6s">
                             <div class="image">
-                                <a href="item-details.html" class="thumbnail"><img src="static/images/items-grid/5.png"  alt="#"></a>
+                                <a href="item-details.html" class="thumbnail"><img src="/static/images/items-grid/5.png"
+                                                                                   alt="#"></a>
                                 <div class="author">
                                     <div class="author-image">
-                                        <a href="javascript:void(0)"><img src="static/images/items-grid/author-3.jpg" alt="#">
+                                        <a href="javascript:void(0)"><img src="/static/images/items-grid/author-3.jpg"
+                                                                          alt="#">
                                             <span>Brad</span></a>
                                     </div>
                                     <p class="sale">New Listing</p>
@@ -198,8 +208,9 @@
                                         <li><a href="javascript:void(0)">(55)</a></li>
                                     </ul>
                                     <ul class="info-list">
-                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> Turin, IT</a></li>
-                                     
+                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> Turin,
+                                            IT</a></li>
+
                                     </ul>
                                 </div>
                                 <div class="bottom-content">
@@ -214,10 +225,12 @@
                         <!-- Start Single Grid -->
                         <div class="single-grid wow fadeInUp" data-wow-delay=".2s">
                             <div class="image">
-                                <a href="item-details.html" class="thumbnail"><img src="static/images/items-grid/3.png" alt="#"></a>
+                                <a href="item-details.html" class="thumbnail"><img src="/static/images/items-grid/3.png"
+                                                                                   alt="#"></a>
                                 <div class="author">
                                     <div class="author-image">
-                                        <a href="javascript:void(0)"><img src="static/images/items-grid/author-4.jpg" alt="#">
+                                        <a href="javascript:void(0)"><img src="/static/images/items-grid/author-4.jpg"
+                                                                          alt="#">
                                             <span>Carlotta</span></a>
                                     </div>
                                     <p class="sale">New Listing</p>
@@ -239,8 +252,9 @@
                                         <li><a href="javascript:void(0)">(35)</a></li>
                                     </ul>
                                     <ul class="info-list">
-                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> Turin, IT</a></li>
-                                        
+                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> Turin,
+                                            IT</a></li>
+
                                     </ul>
                                 </div>
                                 <div class="bottom-content">
@@ -255,11 +269,13 @@
                         <!-- Start Single Grid -->
                         <div class="single-grid wow fadeInUp" data-wow-delay=".4s">
                             <div class="image">
-                                <a href="item-details.html" class="thumbnail"><img src="static/images/items-grid/1.png"  alt="#"></a>
+                                <a href="item-details.html" class="thumbnail"><img src="/static/images/items-grid/1.png"
+                                                                                   alt="#"></a>
                                 <div class="author">
                                     <div class="author-image">
-                                        <a href="javascript:void(0)"><img src="static/images/items-grid/author-5.jpg"  alt="#">
-                                            
+                                        <a href="javascript:void(0)"><img src="/static/images/items-grid/author-5.jpg"
+                                                                          alt="#">
+
                                             <span>Jake</span></a>
                                     </div>
                                     <p class="sale">New Listing</p>
@@ -282,8 +298,9 @@
                                         <li><a href="javascript:void(0)">(35)</a></li>
                                     </ul>
                                     <ul class="info-list">
-                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> Turin, IT</a></li>
-                                        
+                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> Turin,
+                                            IT</a></li>
+
                                     </ul>
                                 </div>
                                 <div class="bottom-content">
@@ -298,10 +315,12 @@
                         <!-- Start Single Grid -->
                         <div class="single-grid wow fadeInUp" data-wow-delay=".6s">
                             <div class="image">
-                                <a href="item-details.html" class="thumbnail"><img src="static/images/items-grid/6.png" alt="#"></a>
+                                <a href="item-details.html" class="thumbnail"><img src="/static/images/items-grid/6.png"
+                                                                                   alt="#"></a>
                                 <div class="author">
                                     <div class="author-image">
-                                        <a href="javascript:void(0)"><img src="static/images/items-grid/author-6.jpg" alt="#">
+                                        <a href="javascript:void(0)"><img src="/static/images/items-grid/author-6.jpg"
+                                                                          alt="#">
                                             <span>David Guetta</span></a>
                                     </div>
                                     <p class="sale">New Listing</p>
@@ -323,8 +342,9 @@
                                         <li><a href="javascript:void(0)">(20)</a></li>
                                     </ul>
                                     <ul class="info-list">
-                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> Turin, IT</a></li>
-                                        
+                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> Turin,
+                                            IT</a></li>
+
                                     </ul>
                                 </div>
                                 <div class="bottom-content">
@@ -339,10 +359,12 @@
                         <!-- Start Single Grid -->
                         <div class="single-grid wow fadeInUp" data-wow-delay=".4s">
                             <div class="image">
-                                <a href="item-details.html" class="thumbnail"><img src="static/images/items-grid/4.png" alt="#"></a>
+                                <a href="item-details.html" class="thumbnail"><img src="/static/images/items-grid/4.png"
+                                                                                   alt="#"></a>
                                 <div class="author">
                                     <div class="author-image">
-                                        <a href="javascript:void(0)"><img src="static/images/items-grid/author-2.jpg" alt="#">
+                                        <a href="javascript:void(0)"><img src="/static/images/items-grid/author-2.jpg"
+                                                                          alt="#">
                                             <span>Alessandra</span></a>
                                     </div>
                                     <p class="sale">New Listing</p>
@@ -364,8 +386,9 @@
                                         <li><a href="javascript:void(0)">(20)</a></li>
                                     </ul>
                                     <ul class="info-list">
-                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> Turin, IT</a></li>
-                                        
+                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> Turin,
+                                            IT</a></li>
+
                                     </ul>
                                 </div>
                                 <div class="bottom-content">
@@ -441,4 +464,3 @@
         });
     </script>
 {% endblock content %}
-

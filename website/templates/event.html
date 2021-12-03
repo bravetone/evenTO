@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "_macros.html" as macros %}
 {% block content %}
   <div class="breadcrumbs">
         <div class="container">
@@ -36,13 +37,13 @@
                         <!-- Start Single Grid -->
 
                           <div class="single-grid wow fadeInUp" data-wow-delay=".6s">
-                            {% for evnt in event %}
+                            {% for evnt in events %}
                             <div class="image">
                                 <a href="item-details.html" class="thumbnail"><img src="/static/images/items-grid/5.png"  alt="#"></a>
                                 <div class="author">
                                     <div class="author-image">
                                         <a href="javascript:void(0)"><img src="/static/images/items-grid/author-3.jpg" alt="#">
-                                            <span>Brad</span></a>
+                                            <span>{{ evnt.username }}</span></a>
                                     </div>
                                     <p class="sale">New Listing</p>
                                 </div>
@@ -53,7 +54,7 @@
                                 <div class="top-content">
                                     <a href="javascript:void(0)" class="tag">{{ evnt.type }}</a>
                                     <h3 class="title">
-                                        <a href="item-details.html">{{ evnt.name }}</a>
+                                        <a href="item-details.html">{{ evnt.title }}</a>
                                     </h3>
                                     <p class="update-time">Last Updated: 3 hours ago</p>
                                     <ul class="rating">
@@ -89,7 +90,9 @@
 
     <!-- /End Items Grid Area -->
 
-
+  <div class="pagination">
+      {{ macros.pagination_widget(pagination, '.events_page') }}
+  </div>
 
   {% include "bottom.html" %}
 

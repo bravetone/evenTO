@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, FileField
-from wtforms.validators import DataRequired,ValidationError, Email, EqualTo, Length
-from website.model import User
+from wtforms import StringField, SubmitField, PasswordField, FileField, SelectField, Form, IntegerField
+from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length, NumberRange
+from website.model import User, EventOwner, Event, Choice, choice_query
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
 
 class ContactForm(FlaskForm):
@@ -37,7 +38,21 @@ class LoginForm(FlaskForm):
 
 # UPLOAD Class
 class UploadForm(FlaskForm):
-    file = FileField('file', validators=[DataRequired()])
-    upload = SubmitField('upload')
+    title = StringField(label='Title:', validators=[DataRequired(), Length(min=2, max=30)])
+    organizer = StringField(label='Name:', validators=[DataRequired(), Length(min=2, max=30)],
+                            render_kw={'readonly': True})
+    type = QuerySelectField(query_factory=choice_query, allow_blank=False, get_label='name')
+    description = StringField(label='description',validators=[DataRequired(), Length(min=1, max=250)])
+    address = StringField(label='address',validators=[DataRequired(), Length(min=1, max=50)])
+    file = FileField(label='file', validators=[DataRequired()])
+    price = IntegerField(label='Price:', validators=[DataRequired(), NumberRange(min=1, max=10)])
+    upload = SubmitField(label='Post')
 
+
+#search form
+class SearchForm(FlaskForm):
+    #choices = [("Type",UploadForm.type),("Location",UploadForm.location)]
+    #select = SelectField('Type', choices=choices)
+    searched = StringField('Searched:', validators=[DataRequired(), Length(min=3, max=10)])
+    submit = SubmitField('Submit')
 
