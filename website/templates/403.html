@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+  <!-- Start Error Area -->
+  <div class="error-area">
+    <div class="d-table">
+      <div class="d-table-cell">
+        <div class="container">
+          <div class="error-content">
+            <h1>403</h1>
+            <h2>Here Is Some Problem</h2>
+            <p>You don't have the permission to access this page :(</p>
+            <div class="button">
+              <a href="/" class="btn">Go To Home</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Error Area -->
+ {% include 'bottom.html' %}
+  <!-- ========================= JS here ========================= -->
+
+
+    <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
+
+
+    <script src="{{ url_for('static',filename='js/wow.min.js') }}"></script>
+
+    <script src="{{ url_for('static',filename='js/tiny-slider.js') }}"></script>
+
+
+
+    <script src="{{ url_for('static',filename='js/glightbox.min.js') }}"></script>
+
+
+
+    <script src="{{ url_for('static',filename='js/main.js') }}"></script>
+    <script type="text/javascript"></script>
+
+
+
+
+{% endblock content%}

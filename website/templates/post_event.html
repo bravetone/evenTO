@@ -25,10 +25,7 @@
     <div class="form-group">
       <label for="Title" style="color: black" >Event Title</label>
       {{ formupload.label }} {{ formupload.title(class='form-control' )}}
-     <!-- <input type="text" class="form-control" id="Title" placeholder="Polito Cafe" > -->
-
     </div>
-
 
     <div class="form-group col-md-6">
       <label for="organizer" style="color: black" >Organizer</label>
@@ -36,8 +33,6 @@
 
       <div> {{ formupload.label }}  </div>
       <div> {{ formupload.organizer._value()}}</div>
-
-
 
     </div>
     <div class="form-group col-md-4">
@@ -49,12 +44,6 @@
             <li style="color:red;">{{ error }}</li>
             {% endfor %}
           </ul>
-       <!--  <option selected>Choose...</option> -->
-       <!-- <option>Cafe</option>  -->
-        <!-- <option>Restaurant</option> -->
-       <!--  <option>Club</option> -->
-       <!-- <option>Exhibition</option> -->
-
     </div>
     <div class="form-group col-md-6">
       <label for="description" style="color: black" >Description</label>
@@ -89,7 +78,7 @@
     </div>
 
     <div class="form-group">
-       <button type="submit" class="btn btn-primary" >Post the event</button>
+        {{ form.submit(class="btn btn--primary") }}
     </div>
 
   </div>
