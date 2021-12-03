@@ -52,3 +52,5 @@ patch_request_class(app)
 
 
 from website import routes
+
+app=Flask(__name__,template_folder='templates')
