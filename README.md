@@ -1,7 +1,7 @@
 # evenTO Update
 
 ##### 2/12/2021
-Added:
+Added:  branch--> yigit
 * EventOwner model
 * User model
 * Follower model
