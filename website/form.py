@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, FileField, SelectField, Form, IntegerField
+from wtforms import StringField, SubmitField, PasswordField, FileField, SelectField, Form, IntegerField, RadioField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length, NumberRange
-from website.model import User, EventOwner, Event, Choice, choice_query
+from website.model import User, EventOwner, Event, choice_query
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
 
@@ -41,12 +41,15 @@ class UploadForm(FlaskForm):
     title = StringField(label='Title:', validators=[DataRequired(), Length(min=2, max=30)])
     organizer = StringField(label='Name:', validators=[DataRequired(), Length(min=2, max=30)],
                             render_kw={'readonly': True})
-    type = QuerySelectField(query_factory=choice_query, allow_blank=False, get_label='name')
+    #types = [("Cafe","Cafe"), ("Restaurant","Restaurant"), ("Club","Club")]
+    #event_type= RadioField("Type", choices=types)
+    event_type = QuerySelectField(query_factory=choice_query, allow_blank=False, get_label='name')
     description = StringField(label='description',validators=[DataRequired(), Length(min=1, max=250)])
     address = StringField(label='address',validators=[DataRequired(), Length(min=1, max=50)])
     file = FileField(label='file', validators=[DataRequired()])
     price = IntegerField(label='Price:', validators=[DataRequired(), NumberRange(min=1, max=10)])
     upload = SubmitField(label='Post')
+
 
 
 #search form

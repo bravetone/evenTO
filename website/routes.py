@@ -148,38 +148,41 @@ def post_events():
 
     eventowner = current_user.username
     formupload.organizer.data = eventowner
-    event = Event(owner=formupload.organizer.data)
-
     if formupload.validate_on_submit():
+        owner = current_user.id
+
         event = Event(title=formupload.title.data,
-                      owner=eventowner,
-                      type=formupload.type.data,
+                      owner=owner,
+                      type=formupload.event_type.id,
                       description=formupload.description.data,
                       price=formupload.price.data,
                       location=formupload.address.data,
                       image_file=photos.save(formupload.file.data,
                                              name=str(session.get('id')) + '.jpg',))
 
-        # file_url.append(filename)
+
+       # file_url.append(filename)
         db.session.add(event)
-        # db.session.add(filename)
+       # db.session.add(filename)
         db.session.commit()
         flash('Event Posted!')
         return redirect(url_for('events_page'))
-    return render_template('post_event.html', formupload=formupload, event=event)
+    return render_template('post_event.html', formupload=formupload)
 
 
 @app.route('/event', methods=['GET', 'POST'])
 def events_page():
+    formupload = UploadForm()
+
     event = Event.query.order_by(Event.date_posted.desc()).all()
     page = request.args.get('page', 1, type=int)
-    show_followed = False
-    if current_user.is_authenticated:
-        show_followed = bool(request.cookies.get('show_followed', ''))
-    if show_followed:
-        query = current_user.followed_posts
-    else:
-        query = Event.query
+    #show_followed = False
+    #if current_user.is_authenticated:
+    #    show_followed = bool(request.cookies.get('show_followed', ''))
+    #if show_followed:
+    #    query = current_user.followed_posts
+    #else:
+    #    query = Event.query
     pagination = Event.query.order_by(Event.date_posted.desc()).paginate(page,
                                                                          per_page=
                                                                          current_app.config['FLASKY_POSTS_PER_PAGE'],
@@ -206,7 +209,7 @@ def edit_post(id):
     if form.validate_on_submit():
         event.title = form.title.data
         # post.author = form.author.data
-        event.content = form.type.data
+        event.content = form.event_type.data
         event.content = form.location.data
         # Update Database
         db.session.add(event)
@@ -214,7 +217,7 @@ def edit_post(id):
         flash("Post Has Been Updated!")
         return redirect(url_for('event', id=event.id))
     form.title.data = event.title
-    form.type.data = event.type
+    form.event_type.data = event.type
     form.location = event.location
     return render_template('edit_event.html', form=form)
 

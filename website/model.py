@@ -18,14 +18,14 @@ def unauthorized():
     return "You are not logged in. Click here to get <a href=" + str("/login") + ">back to Login Page</a>"
 
 
-class Reservation(db.Model):  # users reserve events [many-to-many relationships]
-    __tablename__ = 'reservations'
-    id = db.Column(db.Integer,  # need to figure out how QR code can be stored
-                   primary_key=True,
-                   index=True)
-    reserver_id = db.Column('Users', db.Integer, db.ForeignKey('users.id'))
-    reserved_id = db.Column('Event', db.Integer, db.ForeignKey('event.id'))
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+#class Reservation(db.Model):  # users reserve events [many-to-many relationships]
+#    __tablename__ = 'reservations'
+#    id = db.Column(db.Integer,  # need to figure out how QR code can be stored
+#                   primary_key=True,
+#                   index=True)
+#    reserver_id = db.Column('Users', db.Integer, db.ForeignKey('users.id'))
+#    reserved_id = db.Column('Event', db.Integer, db.ForeignKey('event.id'))
+#    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class Follow(db.Model):  # users following events [many-to-many relationships]
@@ -46,18 +46,18 @@ class Event(db.Model):
     location = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(1024), nullable=True, unique=True)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    type = db.Column(db.Integer(), db.ForeignKey('category.id'), nullable=False)
+    type = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
     image_file = db.Column(db.String(20), nullable=True, default='default.jpg')
-    owner = db.Column(db.Integer(), db.ForeignKey('eventowners.username'), nullable=False)
-    reserver = db.relationship('Reservation', foreign_keys=[Reservation.reserved_id],
-                               backref=db.backref('reserved', lazy='joined'), lazy='dynamic',
-                               cascade='all, delete-orphan')
+    owner = db.Column(db.Integer(), db.ForeignKey('eventowners.id'), nullable=False)
+    #reserver = db.relationship('Reservation', foreign_keys=[Reservation.reserved_id],
+    #                           backref=db.backref('reserved', lazy='joined'), lazy='dynamic',
+    #                           cascade='all, delete-orphan')
 
     # review = db.relationship('Review',backref='review',lazy=True)
     # events own the images, events own the review
 
     def __repr__(self):
-        return 'Event: {}'.format(self.name)
+        return 'Event: {}'.format(self.title)
 
 # class Img(db.Model):
 #    __tablename__="img"
@@ -84,16 +84,16 @@ class USER:
     username = db.Column(db.String(100), unique=True, index=True)
     mail = db.Column(db.String(100), unique=True, index=True)
     password_hash = db.Column(db.String(200), nullable=False)
-    image_file = db.Column(db.String(20), nullable=True, default='default.jpg')
-    age = db.Column(db.Integer, nullable=True)
-    sex = db.Column(db.String(10), default='Prefer not to say')
+    #image_file = db.Column(db.String(20), nullable=True, default='default.jpg')
+    #age = db.Column(db.Integer, nullable=True)
+    #sex = db.Column(db.String(10), default='Prefer not to say')
 
 
 class EventOwner(db.Model, UserMixin, USER):
     __tablename__ = 'eventowners'
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     sub_type = db.Column(db.String, nullable=True, default=00)
-    events = db.relationship('Event', backref='eventowner', lazy=True)
+    events = db.relationship('Event', backref='eventowners', lazy=True)
     follower = db.relationship('Follow', foreign_keys=[Follow.followed_id],
                                backref=db.backref('followed', lazy='joined'), lazy='dynamic',
                                cascade='all, delete-orphan')
@@ -137,9 +137,9 @@ class User(db.Model, UserMixin, USER):
     followed = db.relationship('Follow', foreign_keys=[Follow.follower_id],
                                backref=db.backref('follower', lazy='joined'), lazy='dynamic',
                                cascade='all, delete-orphan')
-    reserved = db.relationship('Reservation', foreign_keys=[Reservation.reserver_id],
-                               backref=db.backref('reserver', lazy='joined'), lazy='dynamic',
-                               cascade='all, delete-orphan')
+    #reserved = db.relationship('Reservation', foreign_keys=[Reservation.reserver_id],
+    #                           backref=db.backref('reserver', lazy='joined'), lazy='dynamic',
+    #                           cascade='all, delete-orphan')
 
     # user owns the review
     def __repr__(self):
@@ -212,7 +212,7 @@ class Role(db.Model):
     name = db.Column(db.String(100), nullable=False)
     default = db.Column(db.Boolean, default=False, index=True)
     permissions = db.Column(db.Integer)
-    users = db.relationship('User', backref='role', lazy='dynamic')
+    users = db.relationship('User', backref='roles', lazy='dynamic')
 
     def __repr__(self):
         return 'Role {}'.format(self.role_name)
@@ -243,7 +243,7 @@ class Choice(db.Model):
     __tablename__ = "category"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), nullable=False)
-    event = db.relationship('Event', backref='events', lazy=True)
+    event = db.relationship('Event', backref='event', lazy=True)
 
     def __repr__(self):
         return '[Choice {}]'.format(self.name)

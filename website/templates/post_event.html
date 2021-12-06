@@ -18,7 +18,7 @@
         </div>
   </div>
 
-<form method="post" enctype="multipart/form-data" action="">
+<form method="post" enctype="multipart/form-data" action="/event">
    {{ form.hidden_tag() }}
   <div class="search-form wow fadeInUp" data-wow-delay=".7s" style="background: none; margin-top:50px; margin-bottom:50px">
 
@@ -38,12 +38,7 @@
     <div class="form-group col-md-4">
       <label for="inputState" style="color: black" >Type</label>
           {{ formupload.csrf_token }}
-          {{ formupload.type }}
-          <ul>
-            {% for error in formupload.type.errors %}
-            <li style="color:red;">{{ error }}</li>
-            {% endfor %}
-          </ul>
+          {{ formupload.event_type }}
     </div>
     <div class="form-group col-md-6">
       <label for="description" style="color: black" >Description</label>
@@ -78,7 +73,7 @@
     </div>
 
     <div class="form-group">
-        {{ form.submit(class="btn btn--primary") }}
+        {{ form.submit(class="btn btn--primary",style="color: black") }}
     </div>
 
   </div>
