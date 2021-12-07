@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import "_macros.html" as macros %}
 {% block content %}
   <div class="breadcrumbs">
         <div class="container">
@@ -36,14 +35,17 @@
                     <div class="col-lg-4 col-md-6 col-12">
                         <!-- Start Single Grid -->
 
-                          <div class="single-grid wow fadeInUp" data-wow-delay=".6s">
-                            {% for evnt in events %}
+                          <div class="single-grid wow fadeInUp" data-wow-delay=".2s">
+                            {% for evnt in event %}
                             <div class="image">
-                                <a href="item-details.html" class="thumbnail"><img src="/static/images/items-grid/5.png"  alt="#"></a>
+                                <a href="item-details.html" ><img class="thumbnail"  src="{{ url_for('static', filename='uploads/' + evnt.image_file) }}" alt="#"/> </a>
                                 <div class="author">
                                     <div class="author-image">
-                                        <a href="javascript:void(0)"><img src="/static/images/items-grid/author-3.jpg" alt="#">
-                                            <span>{{ evnt.username }}</span></a>
+                                       <a href="javascript:void(0)"><img src="/static/images/items-grid/author-3.jpg" alt="#">
+                                            <span>
+                                            {{ current_user.username }}
+                                            </span> </a>
+
                                     </div>
                                     <p class="sale">New Listing</p>
                                 </div>
@@ -52,11 +54,12 @@
 
                             <div class="content">
                                 <div class="top-content">
-                                    <a href="javascript:void(0)" class="tag">{{ evnt.type }}</a>
                                     <h3 class="title">
                                         <a href="item-details.html">{{ evnt.title }}</a>
                                     </h3>
-                                    <p class="update-time">Last Updated: 3 hours ago</p>
+                                    <p>Posted: {{ moment(evnt.date_posted).format('LLL') }}</p>
+
+                                    <a href="javascript:void(0)" class="tag">{{ evnt.category}} </a>
                                     <ul class="rating">
                                         <li><i class="lni lni-star-filled"></i></li>
                                         <li><i class="lni lni-star-filled"></i></li>
@@ -66,7 +69,7 @@
                                         <li><a href="javascript:void(0)">(55)</a></li>
                                     </ul>
                                     <ul class="info-list">
-                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> {{ evnt.location }}</a></li>
+                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> {{ evnt.address }}</a></li>
 
                                     </ul>
                                 </div>
@@ -89,10 +92,6 @@
     <!-- Start Items Grid Area -->
 
     <!-- /End Items Grid Area -->
-
-  <div class="pagination">
-      {{ macros.pagination_widget(pagination, '.events_page') }}
-  </div>
 
   {% include "bottom.html" %}
 

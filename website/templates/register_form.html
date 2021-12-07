@@ -50,6 +50,11 @@
                             <div class="alert-danger">{{ error }}</div>
                         {% endfor %}
                     </div>
+                    <div class="controls">
+                       {{ form.csrf_token }}
+                       {{ form.role.label() }} {{ form.role()}}
+                    </div>
+
 
                     <div class="controls">{{ form.username.label }} {{ form.username(class='form-control') }}
                         {% for error in form.username.errors %}

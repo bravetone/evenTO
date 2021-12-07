@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from flask import current_app
-from flask_login import UserMixin, AnonymousUserMixin
+from flask_login import UserMixin, AnonymousUserMixin, current_user
 
 from website import bcrypt
 from website import db, login_manager
@@ -18,128 +18,56 @@ def unauthorized():
     return "You are not logged in. Click here to get <a href=" + str("/login") + ">back to Login Page</a>"
 
 
-#class Reservation(db.Model):  # users reserve events [many-to-many relationships]
-#    __tablename__ = 'reservations'
-#    id = db.Column(db.Integer,  # need to figure out how QR code can be stored
-#                   primary_key=True,
-#                   index=True)
-#    reserver_id = db.Column('Users', db.Integer, db.ForeignKey('users.id'))
-#    reserved_id = db.Column('Event', db.Integer, db.ForeignKey('event.id'))
-#    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-
-
-class Follow(db.Model):  # users following events [many-to-many relationships]
-    __tablename__ = 'follows'
-    id = db.Column(db.Integer,
-                   primary_key=True,
-                   index=True)
-    follower_id = db.Column('Users', db.Integer, db.ForeignKey('users.id'))
-    followed_id = db.Column('EventOwner', db.Integer, db.ForeignKey('eventowners.id'))
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-
-
 class Event(db.Model):
     __tablename__ = "event"
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(30), nullable=False)
-    price = db.Column(db.Integer(), nullable=False)
-    location = db.Column(db.String(50), nullable=False)
-    description = db.Column(db.String(1024), nullable=True, unique=True)
+    title = db.Column(db.String(length=1024), nullable=False)
+    price = db.Column(db.Float)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    type = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
-    image_file = db.Column(db.String(20), nullable=True, default='default.jpg')
-    owner = db.Column(db.Integer(), db.ForeignKey('eventowners.id'), nullable=False)
-    #reserver = db.relationship('Reservation', foreign_keys=[Reservation.reserved_id],
-    #                           backref=db.backref('reserved', lazy='joined'), lazy='dynamic',
-    #                           cascade='all, delete-orphan')
+    address = db.Column(db.String(50))
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    category = db.relationship(
+        'Category', backref=db.backref('event', lazy='dynamic'))
 
-    # review = db.relationship('Review',backref='review',lazy=True)
-    # events own the images, events own the review
+    # description = db.Column(db.String(length=1024), nullable=True)
+    # date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    image_file = db.Column(db.String(20))
 
-    def __repr__(self):
-        return 'Event: {}'.format(self.title)
+    # owner = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-# class Img(db.Model):
-#    __tablename__="img"
-#    id = db.Column(db.Integer, primary_key=True)
-#    img = db.Column(db.Text, unique=True, nullable=False)
-#    name = db.Column(db.String(100), nullable=False)
-#    mimetype = db.Column(db.Text, nullable=False)
-#    event_img = db.Column(db.Integer(), db.ForeignKey('event.id'),nullable=True)
-
-
-class Review(db.Model):
-    __tablename__ = "review"
-    id = db.Column(db.Integer, primary_key=True)
-    event_id = db.Column(db.Integer, db.ForeignKey('event.id'))
-    reviewer_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    rating = db.Column(db.Integer, nullable=True)
-    review = db.Column(db.String(255), nullable=False)
-
-
-class USER:
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    family_name = db.Column(db.String(100), nullable=False)
-    username = db.Column(db.String(100), unique=True, index=True)
-    mail = db.Column(db.String(100), unique=True, index=True)
-    password_hash = db.Column(db.String(200), nullable=False)
-    #image_file = db.Column(db.String(20), nullable=True, default='default.jpg')
-    #age = db.Column(db.Integer, nullable=True)
-    #sex = db.Column(db.String(10), default='Prefer not to say')
-
-
-class EventOwner(db.Model, UserMixin, USER):
-    __tablename__ = 'eventowners'
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    sub_type = db.Column(db.String, nullable=True, default=00)
-    events = db.relationship('Event', backref='eventowners', lazy=True)
-    follower = db.relationship('Follow', foreign_keys=[Follow.followed_id],
-                               backref=db.backref('followed', lazy='joined'), lazy='dynamic',
-                               cascade='all, delete-orphan')
-
-    @property
-    def followed_posts(self):  # displaying the events that users want to see by following the eventowners
-        return Event.query.join(Follow, Follow.followed_id == Event.owner) \
-            .filter(Follow.follower_id == self.id)
-
-    def follow(self, eventt):
-        if not self.is_following(eventt):
-            f = Follow(follower=self, followed=eventt)
-            db.session.add(f)
-
-    def unfollow(self, eventt):
-        f = self.followed.filter_by(followed_id=eventt.id).first()
-        if f:
-            db.session.delete(f)
-
-    def is_followed_by(self, eventt):
-        return self.followers.filter_by(follower_id=eventt.id).first() is not None
-
-    def is_following(self, eventt):
-        return self.followed.filter_by(
-            followed_id=eventt.id).first() is not None
-
-    def __init__(self, **kwargs):
-        super(EventOwner, self).__init__(**kwargs)
-        return
+    def __init__(self, title, price, address, category, image_file):
+        self.title = title
+        self.price = price
+        self.address = address
+        self.category = category
+        self.image_file = image_file
 
     def __repr__(self):
-        return '<Event Owner {}>'.format(self.username)
+        return '{}'.format(self.title)
 
 
 # eventOwner owns the events
-
-class User(db.Model, UserMixin, USER):
+class User(db.Model, UserMixin):
     __tablename__ = "users"
-    # review = db.relationship('Review', backref='revieww', lazy=True)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(length=1024), nullable=False)
+    family_name = db.Column(db.String(length=1024), nullable=False)
+    username = db.Column(db.String(length=1024), unique=True, index=True)
+    mail = db.Column(db.String(length=1024), unique=True, index=True)
+    password_hash = db.Column(db.String(length=1024), nullable=False)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    followed = db.relationship('Follow', foreign_keys=[Follow.follower_id],
-                               backref=db.backref('follower', lazy='joined'), lazy='dynamic',
-                               cascade='all, delete-orphan')
-    #reserved = db.relationship('Reservation', foreign_keys=[Reservation.reserver_id],
-    #                           backref=db.backref('reserver', lazy='joined'), lazy='dynamic',
-    #                           cascade='all, delete-orphan')
+    role = db.relationship(
+        'Role', backref=db.backref('users', lazy='dynamic'))
+
+    # events = db.relationship('Event', backref='eventowner', lazy=True)
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        if self.role is None:
+            if self.role_id == 0:
+                self.Role = Role.query.filter_by(name='User').first()
+
+            else:
+                self.Role = Role.query.filter_by(name='Event Owner').first()
 
     # user owns the review
     def __repr__(self):
@@ -163,99 +91,67 @@ class User(db.Model, UserMixin, USER):
     def check_password_correction(self, attempted_password):
         return bcrypt.check_password_hash(self.password_hash, attempted_password)
 
-    def __init__(self, **kwargs):
-        super(User, self).__init__(**kwargs)
-        if self.role is None:
-            if self.mail == current_app.config['FLASKY_ADMIN']:
-                self.role = Role.query.filter_by(permissions=0xff).first()
-            if self.role is None:
-                self.role = Role.query.filter_by(default=True).first()
-
-    def can(self, permissions):
-        return self.role is not None and \
-               (self.role.permissions & permissions) == permissions
-
-    def is_administrator(self):
-        return self.can(Permission.ADMINISTER)
-
-    @staticmethod
-    def generate_fake(count=100):
-        from sqlalchemy.exc import IntegrityError
-        from random import seed
-        import forgery_py
-        seed()
-        for i in range(count):
-            u = User(name=forgery_py.name.first_name(),
-                     family_name=forgery_py.name.last_name(),
-                     username=forgery_py.internet.user_name(True),
-                     mail=forgery_py.internet.email_address(),
-                     password=forgery_py.lorem_ipsum.word(),
-                     )
-            db.session.add(u)
-            try:
-                db.session.commit()
-            except IntegrityError:
-                db.session.rollback()
 
 
-class AnonymousUser(AnonymousUserMixin):
-    def can(self, permissions):
-        return False
 
-    def is_administrator(self):
-        return False
+def role_query():
+    return Role.query
 
 
 class Role(db.Model):
     __tablename__ = "roles"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    default = db.Column(db.Boolean, default=False, index=True)
+    role_name = db.Column(db.String(100), nullable=False)
     permissions = db.Column(db.Integer)
-    users = db.relationship('User', backref='roles', lazy='dynamic')
+
+    def __init__(self, role_name):
+        self.role_name = role_name
 
     def __repr__(self):
-        return 'Role {}'.format(self.role_name)
+        return '{}'.format(self.role_name)
+
+    def __init__(self, **kwargs):
+        super(Role, self).__init__(**kwargs)
+        if self.permissions is None:
+            self.permissions = 0
 
     @staticmethod
-    def insert_role():
+    def insert_roles():
         roles = {
-            'User': (Permission.FOLLOW |
-                     Permission.COMMENT, True),
-            'EventOwner': (Permission.WRITE_ARTICLES, True),
-            'Moderator': (Permission.FOLLOW |
-                          Permission.COMMENT |
-                          Permission.WRITE_ARTICLES |
-                          Permission.MODERATE_COMMENTS, False),
-            'Administrator': (0xff, False),
+            'User': [Permission.COMMENT],
+            'Event Owner': [Permission.WRITE],
         }
+        default_role = 'User'
         for r in roles:
             role = Role.query.filter_by(name=r).first()
             if role is None:
                 role = Role(name=r)
-                role.permissions = roles[r][0]
-                role.default = roles[r][1]
-                db.session.add(role)
+            role.reset_permissions()
+            for perm in roles[r]:
+                role.add_permission(perm)
+            role.default = (role.name == default_role)
+            db.session.add(role)
         db.session.commit()
 
 
-class Choice(db.Model):
-    __tablename__ = "category"
+class Permission:
+    FOLLOW = 1
+    COMMENT = 2
+    WRITE = 4
+    MODERATE = 8
+    ADMIN = 16
+
+
+class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20), nullable=False)
-    event = db.relationship('Event', backref='event', lazy=True)
+    name = db.Column(db.String(100))
+
+    def __init__(self, name):
+        self.name = name
 
     def __repr__(self):
-        return '[Choice {}]'.format(self.name)
+        return '{}'.format(self.name)
 
 
 def choice_query():
-    return Choice.query
-
-
-class Permission:
-    FOLLOW = 0X01  # follow other users
-    COMMENT = 0X02  # comment on articles written by others
-    WRITE_ARTICLES = 0X04  # write original articles
-    MODERATE_COMMENTS = 0X08  # suppress offensive comments made by others
-    ADMINISTER = 0X80  # administravite access to the site
+    return Category.query

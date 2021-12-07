@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="evenTO" uuid="de570e73-69bc-42ef-80a6-703a81f55410">
+    <data-source source="LOCAL" name="evenTO" uuid="801edb6f-9c01-40bb-905d-9d4b1ad436d8">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
