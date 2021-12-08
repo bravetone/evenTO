@@ -1,7 +1,7 @@
 import os
 
-from flask import render_template, flash, redirect, url_for, request
-from flask_login import login_user, logout_user, login_required
+from flask import render_template, flash, redirect, url_for, request, abort
+from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 
 from website import app, ALLOWED_EXTENSIONS
@@ -137,20 +137,58 @@ def post_events():
     return render_template('post_event.html', formupload=formupload)
 
 
-@app.route('/event/<id>')
-def event(id):
-    _event = Event.query.get_or_404(id=id)
-    return 'Event - %s, $%s' % (_event.name, _event.price)
+@app.route('/event/<int:event_id>')
+def event(event_id):
+    _event = Event.query.get_or_404(event_id)
+    return render_template('event_own.html', title=_event.title, _event=_event)  # specific event
 
 
-@app.route('/event', methods=['GET', 'POST'])
+@app.route("/event/<int:event_id>/update", methods=['GET', 'POST'])  # specific event edit
+@login_required
+def update_event(event_id):
+    _event = Event.query.get_or_404(event_id)
+    if _event.owner != current_user:
+        abort(403)
+    formupload = UploadForm()
+    if formupload.validate_on_submit():
+        _event.category = Category.query.get_or_404(
+            formupload.category.data.id)
+        _event.title = formupload.title.data
+        _event.price = formupload.price.data
+        _event.address = formupload.address.data
+        db.session.commit()
+        flash('Your post has been updated!', 'success')
+        return redirect(url_for('post', event_id=_event.id))
+    elif request.method == 'GET':
+        formupload.title.data = _event.title
+        formupload.price.data = _event.price
+        formupload.category.data.id = _event.category
+        formupload.address = _event.address
+
+    return render_template('edit_post.html', title='Update Event',
+                           formupload=formupload, legend='Update Event')
+
+
+@app.route("/event/<int:event_id>/delete", methods=['POST'])  # specific event delete
+@login_required
+def delete_event(post_id):
+    _event = Event.query.get_or_404(post_id)
+    if _event.owner != current_user:
+        abort(403)
+    db.session.delete(_event)
+    db.session.commit()
+    flash('Your post has been deleted!', 'success')
+    return redirect(url_for('index'))
+
+
+@app.route('/event', methods=['GET', 'POST'])  # main page for events
 def events_page():
     event = Event.query.all()
     return render_template('event.html', event=event)
 
 
 @app.route('/category-create', methods=['GET', 'POST'])
-def create_category():
+def create_category():  # admin stuff
     form = CategoryForm(request.form, csrf_enabled=False)
     if form.validate_on_submit():
         name = form.name.data
