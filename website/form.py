@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, FileField, SelectField, Form, DecimalField, RadioField
 from wtforms.validators import DataRequired,InputRequired, ValidationError, Email, EqualTo, Length, NumberRange
-from website.model import User, Event, Category,choice_query, role_query
+from website.model import User, Event, Category,choice_query, role_query, PERSON
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
 

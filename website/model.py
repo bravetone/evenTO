@@ -33,7 +33,7 @@ class Event(db.Model):
     # date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     image_file = db.Column(db.String(20))
 
-    # owner = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    owner = db.Column(db.Integer, db.ForeignKey('event_owners.id'), nullable=False)
 
     def __init__(self, title, price, address, category, image_file):
         self.title = title
@@ -46,43 +46,25 @@ class Event(db.Model):
         return '{}'.format(self.title)
 
 
-# eventOwner owns the events
-class User(db.Model, UserMixin):
-    __tablename__ = "users"
+class PERSON:
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(length=1024), nullable=False)
-    family_name = db.Column(db.String(length=1024), nullable=False)
-    username = db.Column(db.String(length=1024), unique=True, index=True)
-    mail = db.Column(db.String(length=1024), unique=True, index=True)
-    password_hash = db.Column(db.String(length=1024), nullable=False)
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    name = db.Column(db.String(100), nullable=False)
+    family_name = db.Column(db.String(100), nullable=False)
+    username = db.Column(db.String(100), unique=True, index=True)
+    mail = db.Column(db.String(100), unique=True, index=True)
+    password_hash = db.Column(db.String(200), nullable=False)
+
+
+# eventOwner owns the events
+class User(db.Model, UserMixin, PERSON):
+    __tablename__ = "users"
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), default=1)
     role = db.relationship(
         'Role', backref=db.backref('users', lazy='dynamic'))
-
-    # events = db.relationship('Event', backref='eventowner', lazy=True)
-    def __init__(self, **kwargs):
-        super(User, self).__init__(**kwargs)
-        if self.role is None:
-            if self.role_id == 0:
-                self.Role = Role.query.filter_by(name='User').first()
-
-            else:
-                self.Role = Role.query.filter_by(name='Event Owner').first()
-
-    # user owns the review
-    def __repr__(self):
-        return '<User {}>'.format(self.username)
 
     @property
     def password(self):
         return self.password
-
-    @login_manager.user_loader
-    def load_user(user_id):
-        try:
-            return User.query.get(user_id)
-        except:
-            return None
 
     @password.setter
     def password(self, plain_text_password):
@@ -91,7 +73,23 @@ class User(db.Model, UserMixin):
     def check_password_correction(self, attempted_password):
         return bcrypt.check_password_hash(self.password_hash, attempted_password)
 
+    def __repr__(self):
+        return '<User {}>'.format(self.username)
 
+    @login_manager.user_loader
+    def load_user(user_id):
+        try:
+            return User.query.get(user_id)
+        except:
+            return None
+
+
+class EventOwner(db.Model, UserMixin, PERSON):
+    __tablename__ = 'event_owners'
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), default=2)
+    event = db.relationship('Event', backref='event_owner', lazy=True)
+    role = db.relationship(
+        'Role', backref=db.backref('event_owners', lazy='dynamic'))
 
 
 def role_query():
@@ -109,37 +107,6 @@ class Role(db.Model):
 
     def __repr__(self):
         return '{}'.format(self.role_name)
-
-    def __init__(self, **kwargs):
-        super(Role, self).__init__(**kwargs)
-        if self.permissions is None:
-            self.permissions = 0
-
-    @staticmethod
-    def insert_roles():
-        roles = {
-            'User': [Permission.COMMENT],
-            'Event Owner': [Permission.WRITE],
-        }
-        default_role = 'User'
-        for r in roles:
-            role = Role.query.filter_by(name=r).first()
-            if role is None:
-                role = Role(name=r)
-            role.reset_permissions()
-            for perm in roles[r]:
-                role.add_permission(perm)
-            role.default = (role.name == default_role)
-            db.session.add(role)
-        db.session.commit()
-
-
-class Permission:
-    FOLLOW = 1
-    COMMENT = 2
-    WRITE = 4
-    MODERATE = 8
-    ADMIN = 16
 
 
 class Category(db.Model):

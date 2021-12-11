@@ -41,7 +41,7 @@
                                 <a href="item-details.html" ><img class="thumbnail"  src="{{ url_for('static', filename='uploads/' + evnt.image_file) }}" alt="#"/> </a>
                                 <div class="author">
                                     <div class="author-image">
-                                       <a href="{{ url_for('event', id=evnt.id) }}"><img src="/static/images/items-grid/author-3.jpg" alt="#">
+                                       <a href=""><img src="/static/images/items-grid/author-3.jpg" alt="#">
                                             <span>
                                             {{ current_user.username }}
                                             </span> </a>
@@ -55,7 +55,7 @@
                             <div class="content">
                                 <div class="top-content">
                                     <h3 class="title">
-                                        <a href="{{ url_for('event', id=evnt.id) }}">{{ evnt.title }}</a>
+                                        <a href="">{{ evnt.title }}</a>
                                     </h3>
                                     <p>Posted: {{ moment(evnt.date_posted).format('LLL') }}</p>
 
@@ -76,9 +76,8 @@
                                 <div class="bottom-content">
                                     <p class="price">Start From: <span> {{ evnt.price }}$  </span></p>
                                     <a href="javascript:void(0)" class="like"><i class="lni lni-heart"></i></a>
-                                    <a href="{{ url_for('update_event', id=evnt.id) }}" class="btn btn-outline-secondary btn-sm">Edit Event</a>
+                                    <a href="{{ url_for('update_event',event_id = evnt.id) }}" class="btn btn-outline-secondary btn-sm">Edit Event</a>
                                 </div>
-
 
 
 

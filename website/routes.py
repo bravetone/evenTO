@@ -7,11 +7,11 @@ from werkzeug.utils import secure_filename
 from website import app, ALLOWED_EXTENSIONS
 from website import db
 from website.form import RegisterForm, SearchForm, UploadForm, LoginForm, CategoryForm
-from website.model import User, Event, Category, Role
+from website.model import User, Event, Category, Role, EventOwner, PERSON
 
 
-# @app.before_first_request
-# def create_db():
+#@app.before_first_request
+#def create_db():
 #    db.drop_all()
 #    db.create_all()
 #    role_user = Role(role_name="User")
@@ -36,14 +36,14 @@ def search():
     events = Event.query.order_by(Event.date_posted)
     if form.validate_on_submit():
         # Get data from submitted form
-        event.searched = form.searched.data
+        events.searched = form.searched.data
         # Query the Database
-        events = events.filter(Event.title.like('%' + event.searched + '%'))
-        posts = events.order_by(Event.title).all()
+        events = events.filter(Event.title.like('%' + events.searched + '%'))
+        events = events.order_by(Event.title).all()
 
         return render_template("search.html",
                                form=form,
-                               searched=event.searched,
+                               searched=events.searched,
                                events=events)
 
 
@@ -52,14 +52,27 @@ def search():
 def register_page():
     form = RegisterForm()
     if form.validate_on_submit():
-        new_user = User(role=Role.query.get_or_404(
-            form.role.data.id),
-            name=form.name.data,
-            family_name=form.family_name.data,
-            username=form.username.data,
-            mail=form.mail.data,
-            password_hash=form.password.data,
-        )
+        password_hash = form.password.data
+        if Role.query.get_or_404(form.role.data.id) == 1:
+            new_user = User(
+                name=form.name.data,
+                family_name=form.family_name.data,
+                username=form.username.data,
+                mail=form.mail.data,
+                password=password_hash,
+                role=Role.query.get_or_404(
+                    form.role.data.id),
+            )
+        else:
+            new_user = EventOwner(
+                name=form.name.data,
+                family_name=form.family_name.data,
+                username=form.username.data,
+                mail=form.mail.data,
+                password=password_hash,
+                role=Role.query.get_or_404(
+                    form.role.data.id),)
+
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
