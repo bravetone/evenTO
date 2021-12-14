@@ -24,6 +24,14 @@
       <div class="form-group">
          {{ formupload.title.label(style="color: black")  }} {{ formupload.title(class='form-control' )}}
       </div>
+      <div class="form-group col-md-6">
+      <label for="organizer" style="color: black" >Organizer</label>
+     <!-- <input type="text" class="form-control" id="Organizer"> -->
+
+      <div> {{ formupload.label }}  </div>
+      <div> {{ formupload.organizer._value()}}</div>
+
+    </div>
       <div class="form-group">
           {{ formupload.csrf_token }}
           {{ formupload.category.label(style="color: black") }} {{ formupload.category()}}

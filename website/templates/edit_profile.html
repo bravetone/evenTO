@@ -1,38 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="breadcrumbs">
+    <div class="breadcrumbs">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 col-md-6 col-12">
                     <div class="breadcrumbs-content">
-                        <h1 class="page-title">Register</h1>
+                        <h1 class="page-title">Edit Profile</h1>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-6 col-12">
                     <ul class="breadcrumb-nav">
-                        <li><a href="/">Home</a></li>
-                        <li>Register</li>
+                        <li><a href="{{ url_for('user',username=current_user.username) }}">Profile</a></li>
+                        <li>Edit Profile</li>
                     </ul>
                 </div>
             </div>
         </div>
-</div>
-
-
-
-    {#    {% if session['username'] %}#}
-    {#       Welcome {{ name }},{{ family }}#}
-    {#    {% else %}#}
-    {#        {{  }}#}
-    {#    {% endif %}#}
-
-
- <section id="register" class="call-register overlay section">
-    <h1 style ="text-align:center; color:white" >Register</h1>
-      <div class="search-form wow fadeInUp" data-wow-delay=".7s" style="background: none;">
-        <div class="row">
-
-          <div class="col-lg-4 col-md-4 col-12 p-0">
+    </div>
+    <div class="col-lg-4 col-md-4 col-12 p-0">
             <form method="post">
                  {{ form.hidden_tag() }}
                 <div class="control-group form-group" >
@@ -50,12 +35,6 @@
                             <div class="alert-danger">{{ error }}</div>
                         {% endfor %}
                     </div>
-                    <div class="controls">
-                       {{ form.csrf_token }}
-                       {{ form.role.label() }} {{ form.role()}}
-                    </div>
-
-
                     <div class="controls">{{ form.username.label }} {{ form.username(class='form-control') }}
                         {% for error in form.username.errors %}
                             <div class="alert-danger">{{ error }}</div>
@@ -66,16 +45,13 @@
                             <div class="alert-danger">{{ error }}</div>
                         {% endfor %}
                     </div>
-
-
-                    <div class="controls">{{ form.password.label }} {{ form.password(class='form-control') }}</div>
                     <div class="controls">{{ form.hidden_tag() }}
                         {{ form.submit(class='btn btn-register'  ) }}</div>
                 </div>
             </form>
-        </div>
-      </div>
- </section>
+    </div>
+
+
 {% include 'bottom.html' %}
 
     <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>

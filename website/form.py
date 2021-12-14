@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, FileField, SelectField, Form, DecimalField, RadioField
 from wtforms.validators import DataRequired,InputRequired, ValidationError, Email, EqualTo, Length, NumberRange
-from website.model import User, Event, Category,choice_query, role_query, PERSON
+from website.model import User, Event, Category,choice_query, role_query
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 
 
@@ -40,8 +40,8 @@ class LoginForm(FlaskForm):
 # UPLOAD Class
 class UploadForm(FlaskForm):
     title = StringField(label='Title:', validators=[InputRequired(), Length(min=2, max=30)])
-    #organizer = StringField(label='Name:', validators=[DataRequired(), Length(min=2, max=30)],
-    #                        render_kw={'readonly': True})
+    organizer = StringField(label='Name:', validators=[DataRequired(), Length(min=2, max=30)],
+                            render_kw={'readonly': True})
     #category = SelectField('Category', validators=[InputRequired()] ,coerce=int, choices=choice_query)
     #types = [("Cafe","Cafe"), ("Restaurant","Restaurant"), ("Club","Club")]
     #event_type= RadioField("Type", choices=types)
@@ -94,3 +94,22 @@ def check_duplicate_category(case_sensitive=True):
 
 class CategoryForm(FlaskForm):
     name = StringField('Name',validators=[InputRequired(),check_duplicate_category()])
+
+
+class EditProfileForm(FlaskForm):
+    def validate_username(self, username_to_check):
+        user = User.query.filter_by(username=username_to_check.data).first()
+        if user:
+            raise ValidationError("User with name ' %s ' exist!" % self.username.data)
+
+    def validate_mail(self, mail_to_check):
+        mail = User.query.filter_by(mail=mail_to_check.data).first()
+        if mail:
+            raise ValidationError('Email Address already exists! Please try a email address!')
+
+    name = StringField(label='Name:', validators=[DataRequired(), Length(min=2, max=20)])
+    family_name = StringField(label='Surname:', validators=[DataRequired(), Length(min=3, max=20)])
+    username = StringField(label='Username:', validators=[DataRequired(), Length(min=3, max=15)])
+    mail = StringField(label='E-Mail', validators=[DataRequired(), Email()])
+    #password2 = PasswordField(label='Confirm Password:', validators=[EqualTo('password'), ])
+    submit = SubmitField(label='Submit')

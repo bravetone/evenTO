@@ -6,8 +6,8 @@ from werkzeug.utils import secure_filename
 
 from website import app, ALLOWED_EXTENSIONS
 from website import db
-from website.form import RegisterForm, SearchForm, UploadForm, LoginForm, CategoryForm
-from website.model import User, Event, Category, Role, EventOwner, PERSON
+from website.form import RegisterForm, SearchForm, UploadForm, LoginForm, CategoryForm, EditProfileForm
+from website.model import User, Event, Category, Role
 
 
 #@app.before_first_request
@@ -19,8 +19,8 @@ from website.model import User, Event, Category, Role, EventOwner, PERSON
 #    category_1 = Category(name="Club")
 #    category_2 = Category(name="Restaurant")
 #    category_3 = Category(name="Cafe")
-#    db.session.add_all([category_1,category_2,category_3])
-#    db.session.add_all([role_user,role_owner])
+#    db.session.add_all([category_1, category_2, category_3])
+#    db.session.add_all([role_user, role_owner])
 #    db.session.commit()
 
 
@@ -53,8 +53,7 @@ def register_page():
     form = RegisterForm()
     if form.validate_on_submit():
         password_hash = form.password.data
-        if Role.query.get_or_404(form.role.data.id) == 1:
-            new_user = User(
+        new_user = User(
                 name=form.name.data,
                 family_name=form.family_name.data,
                 username=form.username.data,
@@ -63,16 +62,6 @@ def register_page():
                 role=Role.query.get_or_404(
                     form.role.data.id),
             )
-        else:
-            new_user = EventOwner(
-                name=form.name.data,
-                family_name=form.family_name.data,
-                username=form.username.data,
-                mail=form.mail.data,
-                password=password_hash,
-                role=Role.query.get_or_404(
-                    form.role.data.id),)
-
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
@@ -101,6 +90,72 @@ def login_page():
     return render_template('login.html', form=form)
 
 
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    role = User.query.filter_by(role_id=current_user.role_id).first_or_404()
+
+    posts = [
+        {'author': user, 'body': 'Test post #1', 'role': role},
+        {'author': user, 'body': 'Test post #2'}
+    ]
+    return render_template('user.html', user=user, posts=posts,role=role)
+
+
+@app.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        current_user.name = form.name.data
+        current_user.family_name = form.family_name.data
+        current_user.username = form.username.data
+        current_user.mail = form.mail.data
+
+        db.session.commit()
+        flash('Your changes have been saved.')
+        return redirect(url_for('edit_profile'))
+    elif request.method == 'GET':
+        form.name.data = current_user.name
+        form.family_name.data = current_user.family_name
+        form.username.data = current_user.username
+        form.mail.data = current_user.mail
+    return render_template('edit_profile.html', title='Edit Profile', form=form)
+
+
+@app.route('/follow/<username>')
+@login_required
+def follow(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash('User {} not found.'.format(username))
+        return redirect(url_for('index'))
+    if user == current_user:
+        flash('You cannot follow yourself!')
+        return redirect(url_for('user', username=username))
+    current_user.follow(user)
+    db.session.commit()
+    flash('You are following {}!'.format(username))
+    return redirect(url_for('user', username=username))
+
+
+@app.route('/unfollow/<username>')
+@login_required
+def unfollow(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash('User {} not found.'.format(username))
+        return redirect(url_for('index'))
+    if user == current_user:
+        flash('You cannot unfollow yourself!')
+        return redirect(url_for('user', username=username))
+    current_user.unfollow(user)
+    db.session.commit()
+    flash('You are not following {}.'.format(username))
+    return redirect(url_for('user', username=username))
+
+
 @app.route("/logout")
 def logout_page():
     """User log-out logic."""
@@ -124,8 +179,14 @@ def allowed_file(filename):
 @app.route('/event/new', methods=['GET', 'POST'])
 @login_required
 def post_events():
+    owner = User.query.filter_by(role_id=current_user.role_id).first_or_404()
+    if owner.role_id != 2:
+        abort(403)
     formupload = UploadForm()
+    event_owner = current_user.username
+    formupload.organizer.data = event_owner
     if formupload.validate_on_submit():
+        owner = event_owner
         category = Category.query.get_or_404(
             formupload.category.data.id)
         title = formupload.title.data
@@ -137,7 +198,7 @@ def post_events():
             filename = secure_filename(image.filename)
             image.save(os.path.join(app.config['UPLOADED_PHOTOS_DEST'], filename))
 
-        events = Event(title,
+        events = Event(owner,title,
                        price,
                        address, category, filename)
         db.session.add(events)
@@ -198,6 +259,13 @@ def delete_event(post_id):
 def events_page():
     event = Event.query.all()
     return render_template('event.html', event=event)
+
+
+@app.route('/event/followed', methods=['GET', 'POST'])
+@login_required
+def followed_event_page():
+    events = current_user.followed_posts().all()
+    return render_template('event_followed.html', events=events)
 
 
 @app.route('/category-create', methods=['GET', 'POST'])

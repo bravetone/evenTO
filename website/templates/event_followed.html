@@ -5,13 +5,13 @@
             <div class="row align-items-center">
                 <div class="col-lg-6 col-md-6 col-12">
                     <div class="breadcrumbs-content">
-                        <h1 class="page-title">Events</h1>
+                        <h1 class="page-title">Followed Events</h1>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-6 col-12">
                     <ul class="breadcrumb-nav">
                         <li><a href="/">Home</a></li>
-                        <li>Events</li>
+                        <li>Followed Events</li>
                     </ul>
                 </div>
             </div>
@@ -23,7 +23,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="section-title">
-                        <h2 class="wow fadeInUp" data-wow-delay=".4s">Events</h2>
+                        <h2 class="wow fadeInUp" data-wow-delay=".4s">Followed Events</h2>
                         <p class="wow fadeInUp" data-wow-delay=".6s">There are many variations of passages of Lorem
                             Ipsum available, but the majority have suffered alteration in some form.</p>
                     </div>
@@ -35,11 +35,8 @@
                     <div class="col-lg-4 col-md-6 col-12">
                         <!-- Start Single Grid -->
 
-                         <div class="single-grid wow fadeInUp" data-wow-delay=".2s">
-
-                            {% for evnt in event %}
-                           <div class="grid-item">
-
+                          <div class="single-grid wow fadeInUp" data-wow-delay=".2s">
+                            {% for evnt in events %}
                             <div class="image">
                                 <a href="item-details.html" ><img class="thumbnail"  src="{{ url_for('static', filename='uploads/' + evnt.image_file) }}" alt="#"/> </a>
                                 <div class="author">
@@ -50,9 +47,7 @@
                                             </span> </a>
 
                                     </div>
-                                    <p class="sale">New Listing</p>
                                 </div>
-                                <p class="item-position"><i class="lni lni-bolt"></i> Featured</p>
                             </div>
 
                             <div class="content">
@@ -85,9 +80,8 @@
 
 
                             </div>
-                             {% endfor %}
-                            </div>
-                         </div>
+                            {% endfor %}
+                        </div>
                         <!-- End Single Grid -->
                     </div>
 

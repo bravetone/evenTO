@@ -58,6 +58,7 @@
                                 <ul id="nav" class="navbar-nav ms-auto">
                                      <li class="nav-item active"><a href="/">Home </a></li>
                                      <li class="nav-item active"><a href="/event">Events </a></li>
+                                     <li class="nav-item active"><a href="/event/followed">Followed Events </a></li>
                                      <li class="nav-item active"><a href="/business">Business </a></li>
                                      <li class="nav-item active"><a href="/about">About Us </a></li>
                                 </ul>
@@ -66,7 +67,7 @@
                             {% if current_user.is_authenticated %}
 
                              <div class="nav-item">
-                                 <a class="nav-link">Welcome, {{ current_user.username }}</a>
+                               <a class="nav-link"  href="{{ url_for('user',username=current_user.username) }}">  Welcome, {{ current_user.username  }}    </a>
                              </div>
                               <div class="button header-button">
                                 <a href="/event/new" class="btn">Post an event</a>

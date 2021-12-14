@@ -34,7 +34,7 @@ app.config['MAIL_SERVER'] = 'smtp.mail.com'
 app.config['MAIL_PORT'] = 587
 # Upload Configuration
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
-app.config['UPLOADED_PHOTOS_DEST'] = os.getcwd() + "/static"
+app.config['UPLOADED_PHOTOS_DEST'] = os.getcwd() + "/website/static/uploads"
 app.config['FLASKY_POSTS_PER_PAGE'] = 10
 app.config['FLASKY_ADMIN'] = os.environ.get('FLASKY_ADMIN')
 #Admin
