@@ -242,3 +242,4 @@ def internal_server_error(e):
 @app.errorhandler(403)
 def no_permission(e):
     return render_template('403.html'), 403
+
