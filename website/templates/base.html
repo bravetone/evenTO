@@ -5,6 +5,8 @@
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <title>evenTO</title>
+    {{ moment.include_jquery() }}
+    {{ moment.include_moment() }}
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" type="image/x-icon" href="/static/images/logo/logo_small.png" />
@@ -35,17 +37,6 @@
       </p>
     <![endif]-->
 
-    <!-- Preloader -->
-    <div class="preloader">
-        <div class="preloader-inner">
-            <div class="preloader-icon">
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </div>
-    <!-- /End Preloader -->
-
     <!-- Start Header Area -->
     <header class="header navbar-area">
         <div class="container">
@@ -67,6 +58,7 @@
                                 <ul id="nav" class="navbar-nav ms-auto">
                                      <li class="nav-item active"><a href="/">Home </a></li>
                                      <li class="nav-item active"><a href="/event">Events </a></li>
+                                     <li class="nav-item active"><a href="/event/followed">Followed Events </a></li>
                                      <li class="nav-item active"><a href="/business">Business </a></li>
                                      <li class="nav-item active"><a href="/about">About Us </a></li>
                                 </ul>
@@ -75,7 +67,7 @@
                             {% if current_user.is_authenticated %}
 
                              <div class="nav-item">
-                                 <a class="nav-link">Welcome, {{ current_user.username }}</a>
+                               <a class="nav-link"  href="{{ url_for('user',username=current_user.username) }}">  Welcome, {{ current_user.username  }}    </a>
                              </div>
                               <div class="button header-button">
                                 <a href="/event/new" class="btn">Post an event</a>

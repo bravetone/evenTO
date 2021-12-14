@@ -1,36 +1,27 @@
 import os
-from functools import wraps
 
-from flask import render_template, flash, redirect, url_for, session, current_app, abort, request, make_response
+from flask import render_template, flash, redirect, url_for, request, abort
 from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.utils import secure_filename
 
-from website import app, photos
+from website import app, ALLOWED_EXTENSIONS
 from website import db
-from website.form import RegisterForm, SearchForm, UploadForm, LoginForm
-from website.model import User, Event, Permission
+from website.form import RegisterForm, SearchForm, UploadForm, LoginForm, CategoryForm, EditProfileForm
+from website.model import User, Event, Category, Role
 
 
 #@app.before_first_request
 #def create_db():
 #    db.drop_all()
 #    db.create_all()
-
-
-def permission_required(permission):
-    def decorator(f):
-        @wraps(f)
-        def decorated_function(*args, **kwargs):
-            if not current_user.can(permission):
-                abort(403)
-            return f(*args, **kwargs)
-
-        return decorated_function
-
-    return decorator
-
-
-def admin_required(f):
-    return permission_required(Permission.ADMINISTER)(f)
+#    role_user = Role(role_name="User")
+#    role_owner = Role(role_name="Event Owner")
+#    category_1 = Category(name="Club")
+#    category_2 = Category(name="Restaurant")
+#    category_3 = Category(name="Cafe")
+#    db.session.add_all([category_1, category_2, category_3])
+#    db.session.add_all([role_user, role_owner])
+#    db.session.commit()
 
 
 @app.context_processor
@@ -39,9 +30,21 @@ def base():
     return dict(form=form)
 
 
-@app.context_processor
-def inject_permissions():
-    return dict(Permission=Permission)
+@app.route('/search', methods=["POST"])
+def search():
+    form = SearchForm()
+    events = Event.query.order_by(Event.date_posted)
+    if form.validate_on_submit():
+        # Get data from submitted form
+        events.searched = form.searched.data
+        # Query the Database
+        events = events.filter(Event.title.like('%' + events.searched + '%'))
+        events = events.order_by(Event.title).all()
+
+        return render_template("search.html",
+                               form=form,
+                               searched=events.searched,
+                               events=events)
 
 
 # AUTHORIZATION
@@ -49,15 +52,16 @@ def inject_permissions():
 def register_page():
     form = RegisterForm()
     if form.validate_on_submit():
-        username = form.username.data
-
         password_hash = form.password.data
-        new_user = User(name=form.name.data,
-                        family_name=form.family_name.data,
-                        username=form.username.data,
-                        mail=form.mail.data,
-                        password=password_hash,
-                        )
+        new_user = User(
+                name=form.name.data,
+                family_name=form.family_name.data,
+                username=form.username.data,
+                mail=form.mail.data,
+                password=password_hash,
+                role=Role.query.get_or_404(
+                    form.role.data.id),
+            )
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
@@ -86,6 +90,72 @@ def login_page():
     return render_template('login.html', form=form)
 
 
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    role = User.query.filter_by(role_id=current_user.role_id).first_or_404()
+
+    posts = [
+        {'author': user, 'body': 'Test post #1', 'role': role},
+        {'author': user, 'body': 'Test post #2'}
+    ]
+    return render_template('user.html', user=user, posts=posts,role=role)
+
+
+@app.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        current_user.name = form.name.data
+        current_user.family_name = form.family_name.data
+        current_user.username = form.username.data
+        current_user.mail = form.mail.data
+
+        db.session.commit()
+        flash('Your changes have been saved.')
+        return redirect(url_for('edit_profile'))
+    elif request.method == 'GET':
+        form.name.data = current_user.name
+        form.family_name.data = current_user.family_name
+        form.username.data = current_user.username
+        form.mail.data = current_user.mail
+    return render_template('edit_profile.html', title='Edit Profile', form=form)
+
+
+@app.route('/follow/<username>')
+@login_required
+def follow(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash('User {} not found.'.format(username))
+        return redirect(url_for('index'))
+    if user == current_user:
+        flash('You cannot follow yourself!')
+        return redirect(url_for('user', username=username))
+    current_user.follow(user)
+    db.session.commit()
+    flash('You are following {}!'.format(username))
+    return redirect(url_for('user', username=username))
+
+
+@app.route('/unfollow/<username>')
+@login_required
+def unfollow(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash('User {} not found.'.format(username))
+        return redirect(url_for('index'))
+    if user == current_user:
+        flash('You cannot unfollow yourself!')
+        return redirect(url_for('user', username=username))
+    current_user.unfollow(user)
+    db.session.commit()
+    flash('You are not following {}.'.format(username))
+    return redirect(url_for('user', username=username))
+
+
 @app.route("/logout")
 def logout_page():
     """User log-out logic."""
@@ -98,125 +168,120 @@ def logout_page():
 @app.route('/', methods=['GET', 'POST'])
 def index():
     formupload = UploadForm()
-
     return render_template('index.html', formupload=formupload)
 
 
-@app.route('/search', methods=["POST"])
-def search():
-    form = SearchForm()
-    events = Event.query.order_by(Event.date_posted)
-    if form.validate_on_submit():
-        # Get data from submitted form
-        event.searched = form.searched.data
-        # Query the Database
-        events = events.filter(Event.title.like('%' + event.searched + '%'))
-        posts = events.order_by(Event.title).all()
-
-        return render_template("search.html",
-                               form=form,
-                               searched=event.searched,
-                               events=events)
-
-
-@app.route('/all')
-@login_required
-def show_all():
-    resp = make_response(redirect(url_for('.events')))
-    resp.set_cookie('show_followed', '', max_age=30 * 24 * 60 * 60)
-    return resp
-
-
-@app.route('/followed')
-@login_required
-def show_followed():
-    resp = make_response(redirect(url_for('.events')))
-    resp.set_cookie('show_followed', '1', max_age=30 * 24 * 60 * 60)
-    return resp
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.lower().rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
 @app.route('/event/new', methods=['GET', 'POST'])
 @login_required
 def post_events():
-    if not os.path.exists('static/' + str(session.get('id'))):
-        os.makedirs('static/' + str(session.get('id')))
-    file_url = os.listdir('static/' + str(session.get('id')))
-    file_url = [str(session.get('id')) + "/" +
-                file for file in file_url]
-
+    owner = User.query.filter_by(role_id=current_user.role_id).first_or_404()
+    if owner.role_id != 2:
+        abort(403)
     formupload = UploadForm()
-
-    eventowner = current_user.username
-    formupload.organizer.data = eventowner
-    event = Event(owner=formupload.organizer.data)
-
+    event_owner = current_user.username
+    formupload.organizer.data = event_owner
     if formupload.validate_on_submit():
-        event = Event(title=formupload.title.data,
-                      owner=eventowner,
-                      type=formupload.type.data,
-                      description=formupload.description.data,
-                      price=formupload.price.data,
-                      location=formupload.address.data,
-                      image_file=photos.save(formupload.file.data,
-                                             name=str(session.get('id')) + '.jpg',))
+        owner = event_owner
+        category = Category.query.get_or_404(
+            formupload.category.data.id)
+        title = formupload.title.data
+        price = formupload.price.data
+        address = formupload.address.data
+        image = request.files['image']
+        filename = ''
+        if image and allowed_file(image.filename):
+            filename = secure_filename(image.filename)
+            image.save(os.path.join(app.config['UPLOADED_PHOTOS_DEST'], filename))
 
-        # file_url.append(filename)
-        db.session.add(event)
-        # db.session.add(filename)
+        events = Event(owner,title,
+                       price,
+                       address, category, filename)
+        db.session.add(events)
         db.session.commit()
         flash('Event Posted!')
-        return redirect(url_for('events_page'))
-    return render_template('post_event.html', formupload=formupload, event=event)
+        return redirect(url_for('events_page', id=events.id))
+    if formupload.errors:
+        flash(formupload.errors, 'danger')
+
+    return render_template('post_event.html', formupload=formupload)
 
 
-@app.route('/event', methods=['GET', 'POST'])
-def events_page():
-    event = Event.query.order_by(Event.date_posted.desc()).all()
-    page = request.args.get('page', 1, type=int)
-    show_followed = False
-    if current_user.is_authenticated:
-        show_followed = bool(request.cookies.get('show_followed', ''))
-    if show_followed:
-        query = current_user.followed_posts
-    else:
-        query = Event.query
-    pagination = Event.query.order_by(Event.date_posted.desc()).paginate(page,
-                                                                         per_page=
-                                                                         current_app.config['FLASKY_POSTS_PER_PAGE'],
-                                                                         error_out=False
-                                                                         )
-    events = pagination.items
-    return render_template('event.html', events=events, pagination=pagination, show_followed=show_followed, event=event)
+@app.route('/event/<int:event_id>')
+def event(event_id):
+    _event = Event.query.get_or_404(event_id)
+    return render_template('event_own.html', title=_event.title, _event=_event)  # specific event
 
 
-@app.route('/event/<int:id>')
-def event(id):
-    event = Event.query.get_or_404(id)
-    return render_template('event.html', events=[event])
-
-
-@app.route('/posts/edit/<int:id>', methods=['GET', 'POST'])
+@app.route("/event/<int:event_id>/update", methods=['GET', 'POST'])  # specific event edit
 @login_required
-def edit_post(id):
-    event = Event.query.get_or_404(id)
-    if current_user != event.owner and \
-            not current_user.can(Permission.ADMINISTER):
+def update_event(event_id):
+    _event = Event.query.get_or_404(event_id)
+    if _event.owner != current_user:
         abort(403)
-    form = UploadForm()
-    if form.validate_on_submit():
-        event.title = form.title.data
-        # post.author = form.author.data
-        event.content = form.type.data
-        event.content = form.location.data
-        # Update Database
-        db.session.add(event)
+    formupload = UploadForm()
+    if formupload.validate_on_submit():
+        _event.category = Category.query.get_or_404(
+            formupload.category.data.id)
+        _event.title = formupload.title.data
+        _event.price = formupload.price.data
+        _event.address = formupload.address.data
         db.session.commit()
-        flash("Post Has Been Updated!")
-        return redirect(url_for('event', id=event.id))
-    form.title.data = event.title
-    form.type.data = event.type
-    form.location = event.location
-    return render_template('edit_event.html', form=form)
+        flash('Your post has been updated!', 'success')
+        return redirect(url_for('post', event_id=_event.id))
+    elif request.method == 'GET':
+        formupload.title.data = _event.title
+        formupload.price.data = _event.price
+        formupload.category.data.id = _event.category
+        formupload.address = _event.address
+
+    return render_template('edit_post.html', title='Update Event',
+                           formupload=formupload, legend='Update Event')
+
+
+@app.route("/event/<int:event_id>/delete", methods=['POST'])  # specific event delete
+@login_required
+def delete_event(post_id):
+    _event = Event.query.get_or_404(post_id)
+    if _event.owner != current_user:
+        abort(403)
+    db.session.delete(_event)
+    db.session.commit()
+    flash('Your post has been deleted!', 'success')
+    return redirect(url_for('index'))
+
+
+@app.route('/event', methods=['GET', 'POST'])  # main page for events
+def events_page():
+    event = Event.query.all()
+    return render_template('event.html', event=event)
+
+
+@app.route('/event/followed', methods=['GET', 'POST'])
+@login_required
+def followed_event_page():
+    events = current_user.followed_posts().all()
+    return render_template('event_followed.html', events=events)
+
+
+@app.route('/category-create', methods=['GET', 'POST'])
+def create_category():  # admin stuff
+    form = CategoryForm(request.form, csrf_enabled=False)
+    if form.validate_on_submit():
+        name = form.name.data
+        category = Category(name)
+        db.session.add(category)
+        db.session.commit()
+        flash('The category %s has been created' % name,
+              'success')
+        return redirect(url_for('post_events',
+                                id=category.id))
+    if form.errors: flash(form.errors)
+    return render_template('category-create.html', form=form)
 
 
 @app.route('/business')

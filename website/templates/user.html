@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="breadcrumbs">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6 col-12">
+                    <div class="breadcrumbs-content">
+                        <h1 class="page-title">Profile</h1>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-12">
+                    <ul class="breadcrumb-nav">
+                        <li><a href="/">Home</a></li>
+                        <li>User</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <table>
+        <tr valign="top">
+            <td> <img src="{{ user.avatar(128) }}"></td>
+            <td>
+                <h1>{{ user.username }}
+                </h1>
+                <h4>{{ user.role }}
+                </h4>
+                <p>{{ user.followers.count() }} followers, {{ user.followed.count() }}
+                following.</p>
+            </td>
+        </tr>
+    {% if user == current_user %}
+        <p><a href="{{ url_for('edit_profile') }}">Edit your profile</a></p>
+        {% elif not current_user.is_following(user) %}
+        <p><a href="{{ url_for('follow', username=user.username) }}">Follow</a></p>
+    {% else %}
+        <p><a href="{{ url_for('unfollow', username=user.username) }}">Unfollow</a></p>
+    {% endif %}
+
+    </table>
+    <hr>
+    {% for post in posts %}
+    <p>
+    {{ post.author.username }} says: <b>{{ post.body }}</b>
+    </p>
+    {% endfor %}
+
+{% include "bottom.html" %}
+
+    <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/wow.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/tiny-slider.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/glightbox.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/main.js') }}"></script>
+
+{% endblock %}
