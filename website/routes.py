@@ -36,14 +36,14 @@ def search():
     events = Event.query.order_by(Event.date_posted)
     if form.validate_on_submit():
         # Get data from submitted form
-        events.searched = form.searched.data
+        searched = form.searched.data
         # Query the Database
-        events = events.filter(Event.title.like('%' + events.searched + '%'))
+        events = events.filter(Event.title.like('%' + searched + '%'))
         events = events.order_by(Event.title).all()
 
         return render_template("search.html",
                                form=form,
-                               searched=events.searched,
+                               searched=searched,
                                events=events)
 
 

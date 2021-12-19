@@ -14,9 +14,9 @@
                         <!-- End Hero Text -->
                         <!-- Start Search Form -->
                         <div class="search-form wow fadeInUp" data-wow-delay=".7s">
+                            <form method="post" action="{{ url_for('search') }}">
                             <div class="row">
                                 <div class="col-lg-4 col-md-4 col-12 p-0">
-                                    <form method="post" action="{{ url_for('search') }}">
                                         {{ form.hidden_tag() }}
                                         <div class="search-input">
                                             <label for="keyword"><i class="lni lni-search-alt theme-color"></i></label>
@@ -28,7 +28,6 @@
                                         </div>
 
 
-                                    </form>
                                 </div>
                                 <div class="col-lg-3 col-md-3 col-12 p-0">
                                     <div class="search-input">
@@ -56,6 +55,7 @@
                                     </div>
                                 </div>
                             </div>
+                            </form>
                         </div>
                         <!-- End Search Form -->
                     </div>
