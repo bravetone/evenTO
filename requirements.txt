@@ -1,0 +1,8 @@
+Flask-SQLAlchemy
+Flask-WTF
+flask
+flask-mail
+flask-bcrypt
+flask-login
+flask-moment
+flask-uploads
