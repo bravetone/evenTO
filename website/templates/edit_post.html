@@ -17,7 +17,7 @@
             </div>
         </div>
   </div>
-  <form method="POST" action="{{ url_for('update_event') }}" role="form" enctype="multipart/form-data">
+  <form method="POST" action="{{ url_for('update_event', event_id=formupload.event_id) }}" role="form" enctype="multipart/form-data">
        {{ formupload.hidden_tag() }}
     <div class="search-form wow fadeInUp" data-wow-delay=".7s" style="background: none; margin-top:50px; margin-bottom:50px">
 
@@ -28,6 +28,9 @@
           {{ formupload.csrf_token }}
           {{ formupload.category.label(style="color: black") }} {{ formupload.category()}}
       </div>
+        <div class="form-group" style="display: none">
+            {{ formupload.organizer() }}
+        </div>
       <div class="form-group">
           {{ formupload.price.label(style="color: black")  }} {{ formupload.price(class='form-control' )}}
       </div>

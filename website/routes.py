@@ -36,14 +36,14 @@ def search():
     events = Event.query.order_by(Event.date_posted)
     if form.validate_on_submit():
         # Get data from submitted form
-        events.searched = form.searched.data
+        searched = form.searched.data
         # Query the Database
-        events = events.filter(Event.title.like('%' + events.searched + '%'))
+        events = events.filter(Event.title.like('%' + searched + '%'))
         events = events.order_by(Event.title).all()
 
         return render_template("search.html",
                                form=form,
-                               searched=events.searched,
+                               searched=searched,
                                events=events)
 
 
@@ -221,7 +221,8 @@ def event(event_id):
 @login_required
 def update_event(event_id):
     _event = Event.query.get_or_404(event_id)
-    if _event.owner != current_user:
+
+    if _event.owner != current_user.username:
         abort(403)
     formupload = UploadForm()
     if formupload.validate_on_submit():
@@ -232,14 +233,16 @@ def update_event(event_id):
         _event.address = formupload.address.data
         db.session.commit()
         flash('Your post has been updated!', 'success')
-        return redirect(url_for('post', event_id=_event.id))
+        return redirect(url_for('post_events'))
     elif request.method == 'GET':
         formupload.title.data = _event.title
         formupload.price.data = _event.price
-        formupload.category.data.id = _event.category
-        formupload.address = _event.address
+        formupload.category.data = _event.category
+        formupload.address.data = _event.address
+        formupload.event_id = event_id
+        formupload.organizer.data = _event.owner
 
-    return render_template('edit_post.html', title='Update Event',
+        return render_template('edit_post.html', title='Update Event',
                            formupload=formupload, legend='Update Event')
 
 
