@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Message, Mail
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
-import pytest
+from flask_moment import Moment
 
 
 
@@ -33,15 +33,22 @@ app.config['MAIL_TLS'] = True
 app.config['MAIL_SERVER'] = 'smtp.mail.com'
 app.config['MAIL_PORT'] = 587
 # Upload Configuration
-app.config['UPLOADED_PHOTOS_DEST'] = os.getcwd() + "/static"
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOADED_PHOTOS_DEST'] = os.getcwd() + "/website/static/uploads"
 app.config['FLASKY_POSTS_PER_PAGE'] = 10
 app.config['FLASKY_ADMIN'] = os.environ.get('FLASKY_ADMIN')
+#Admin
+app.config['EVENTO_ADMIN']=os.environ.get('EVENTO_ADMIN')
+app.config['EVENTO_MAIL_SUBJECT_PREFIX'] = '[evenTO]'
+app.config['EVENTO_MAIL_SENDER'] =  'evenTO Admin <admin@evento.com>'
+
 
 
 db = SQLAlchemy(app)
 # MAIL
 mail = Mail(app)
 bcrypt = Bcrypt(app)
+moment = Moment(app)
 
 
 login_manager = LoginManager(app)

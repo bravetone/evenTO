@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="breadcrumbs">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6 col-12">
+                    <div class="breadcrumbs-content">
+                        <h1 class="page-title">Edit Profile</h1>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-12">
+                    <ul class="breadcrumb-nav">
+                        <li><a href="{{ url_for('user',username=current_user.username) }}">Profile</a></li>
+                        <li>Edit Profile</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-4 col-12 p-0">
+            <form method="post">
+                 {{ form.hidden_tag() }}
+                <div class="control-group form-group" >
+                    <div class="controls">
+                        {{ form.name.label }} {{ form.name(class='form-control'  ) }}
+
+                        {% for error in form.name.errors %}
+                            <div class="alert-danger">{{ error }}</div>
+                        {% endfor %}
+
+                    </div>
+                    <div class="controls">
+                        {{ form.family_name.label }} {{ form.family_name(class='form-control') }}
+                        {% for error in form.family_name.errors %}
+                            <div class="alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="controls">{{ form.username.label }} {{ form.username(class='form-control') }}
+                        {% for error in form.username.errors %}
+                            <div class="alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="controls">{{ form.mail.label }} {{ form.mail(class='form-control') }}
+                        {% for error in form.mail.errors %}
+                            <div class="alert-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="controls">{{ form.hidden_tag() }}
+                        {{ form.submit(class='btn btn-register'  ) }}</div>
+                </div>
+            </form>
+    </div>
+
+
+{% include 'bottom.html' %}
+
+    <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/wow.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/tiny-slider.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/glightbox.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/main.js') }}"></script>
+
+{% endblock content %}

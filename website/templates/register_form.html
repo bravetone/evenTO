@@ -27,10 +27,10 @@
     {#    {% endif %}#}
 
 
-    <section id="register" class="call-register overlay section">
+ <section id="register" class="call-register overlay section">
     <h1 style ="text-align:center; color:white" >Register</h1>
-    <div class="search-form wow fadeInUp" data-wow-delay=".7s" style="background: none;">
-    <div class="row">
+      <div class="search-form wow fadeInUp" data-wow-delay=".7s" style="background: none;">
+        <div class="row">
 
           <div class="col-lg-4 col-md-4 col-12 p-0">
             <form method="post">
@@ -50,6 +50,11 @@
                             <div class="alert-danger">{{ error }}</div>
                         {% endfor %}
                     </div>
+                    <div class="controls">
+                       {{ form.csrf_token }}
+                       {{ form.role.label() }} {{ form.role()}}
+                    </div>
+
 
                     <div class="controls">{{ form.username.label }} {{ form.username(class='form-control') }}
                         {% for error in form.username.errors %}
@@ -69,9 +74,9 @@
                 </div>
             </form>
         </div>
-    </div>
-    </section>
-    {% include 'bottom.html' %}
+      </div>
+ </section>
+{% include 'bottom.html' %}
 
     <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static',filename='js/wow.min.js') }}"></script>

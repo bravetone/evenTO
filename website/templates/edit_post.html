@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="breadcrumbs">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6 col-12">
+                    <div class="breadcrumbs-content">
+                        <h1 class="page-title">Edit Event</h1>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-12">
+                    <ul class="breadcrumb-nav">
+                        <li><a href="/">Home</a></li>
+                        <li>Events</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+  </div>
+  <form method="POST" action="{{ url_for('update_event') }}" role="form" enctype="multipart/form-data">
+       {{ formupload.hidden_tag() }}
+    <div class="search-form wow fadeInUp" data-wow-delay=".7s" style="background: none; margin-top:50px; margin-bottom:50px">
+
+      <div class="form-group">
+         {{ formupload.title.label(style="color: black")  }} {{ formupload.title(class='form-control' )}}
+      </div>
+      <div class="form-group">
+          {{ formupload.csrf_token }}
+          {{ formupload.category.label(style="color: black") }} {{ formupload.category()}}
+      </div>
+      <div class="form-group">
+          {{ formupload.price.label(style="color: black")  }} {{ formupload.price(class='form-control' )}}
+      </div>
+      <div class="form-group">
+        {{ formupload.address.label(style="color: black")  }} {{ formupload.address(class='form-control' )}}
+      </div>
+      <div class="form-group">
+        {{ formupload.image.label(style="color: black") }}: {{ formupload.image(style='display:inline;') }}
+      </div>
+
+      <div class="form-group">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="gridCheck">
+          <label class="form-check-label" for="gridCheck" style="color: black">
+             I agree to the Terms of Service and Privacy Policy
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        {{ formupload.upload(class="btn btn--primary",style="color: black") }}
+      </div>
+    </div>
+  </form>
+{% include "bottom.html" %}
+
+  <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/wow.min.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/tiny-slider.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/glightbox.min.js') }}"></script>
+  <script src="{{ url_for('static',filename='js/main.js') }}"></script>
+
+{% endblock content %}
