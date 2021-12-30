@@ -28,6 +28,9 @@
           {{ formupload.csrf_token }}
           {{ formupload.category.label(style="color: black") }} {{ formupload.category()}}
       </div>
+        <div class="form-group">
+            {{ formupload.music_type.label(style="color: black") }} {{ formupload.music_type() }}
+        </div>
         <div class="form-group" style="display: none">
             {{ formupload.organizer() }}
         </div>
