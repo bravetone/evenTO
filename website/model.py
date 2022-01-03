@@ -207,6 +207,18 @@ class EventLike(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), primary_key=True)
 
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(1000))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'))
+    user = db.relationship('User', backref=db.backref('comment', lazy='dynamic'))
+    event = db.relationship('Event', backref=db.backref('comment', lazy='dynamic'))
+
+    def __init__(self, text, user, event):
+        self.text = text
+        self.user = user
+        self.event = event
 
 def choice_query():
     return Category.query

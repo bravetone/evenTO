@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 from website import app, ALLOWED_EXTENSIONS
 from website import db
 from website.form import RegisterForm, SearchForm, UploadForm, LoginForm, CategoryForm, EditProfileForm
-from website.model import User, Event, Category, Role, Music
+from website.model import User, Event, Category, Role, Music, Comment
 
 
 #@app.before_first_request
@@ -227,7 +227,8 @@ def post_events():
 @app.route('/event/<int:event_id>')
 def event(event_id):
     _event = Event.query.get_or_404(event_id)
-    return render_template('show_event.html', title=_event.title, _event=_event)  # specific event
+    comments = Comment.query.filter_by(event_id=event_id)
+    return render_template('show_event.html', title=_event.title, event=_event, comments=comments)  # specific event
 
 
 @app.route("/event/<int:event_id>/update", methods=['GET', 'POST'])  # specific event edit
@@ -319,6 +320,16 @@ def unlike_event(event_id):
     current_user.unlike(_event)
     flash('Unliked event!', 'success')
     return redirect(url_for('events_page'))
+
+@app.route('/event/<int:event_id>/comment', methods=['POST'])
+def add_comment(event_id):
+    comment_text = request.form['comment']
+    event = Event.query.get_or_404(event_id)
+    comment = Comment(comment_text, current_user, event)
+    db.session.add(comment)
+    db.session.commit()
+    flash('Comment submitted!', 'success')
+    return redirect(url_for('event', event_id=event_id))
 
 @app.route('/business')
 def business():
