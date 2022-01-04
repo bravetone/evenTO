@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 from website import app, ALLOWED_EXTENSIONS
 from website import db
 from website.form import RegisterForm, SearchForm, UploadForm, LoginForm, CategoryForm, EditProfileForm
-from website.model import User, Event, Category, Role
+from website.model import User, Event, Category, Role, Music, Comment
 
 
 #@app.before_first_request
@@ -37,8 +37,12 @@ def search():
     if form.validate_on_submit():
         # Get data from submitted form
         searched = form.searched.data
+        category = form.category.data.name
         # Query the Database
         events = events.filter(Event.title.like('%' + searched + '%'))
+        # category_name = Event.category
+        events = events.filter(Event.category.has(name=category))
+        # events = events.filter(Event.)
         events = events.order_by(Event.title).all()
 
         return render_template("search.html",
@@ -100,7 +104,13 @@ def user(username):
         {'author': user, 'body': 'Test post #1', 'role': role},
         {'author': user, 'body': 'Test post #2'}
     ]
-    return render_template('user.html', user=user, posts=posts,role=role)
+
+    if user.role_id == 2:
+        events = user.owned_events()
+        print(events)
+        return render_template('event_owner.html', events=events)
+    else:
+        return render_template('user.html', user=user, posts=posts,role=role)
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -189,6 +199,9 @@ def post_events():
         owner = event_owner
         category = Category.query.get_or_404(
             formupload.category.data.id)
+        music_type = Music.query.get_or_404(
+            formupload.music_type.data.id
+        )
         title = formupload.title.data
         price = formupload.price.data
         address = formupload.address.data
@@ -200,7 +213,7 @@ def post_events():
 
         events = Event(owner,title,
                        price,
-                       address, category, filename)
+                       address, category, music_type, filename)
         db.session.add(events)
         db.session.commit()
         flash('Event Posted!')
@@ -214,7 +227,8 @@ def post_events():
 @app.route('/event/<int:event_id>')
 def event(event_id):
     _event = Event.query.get_or_404(event_id)
-    return render_template('event_own.html', title=_event.title, _event=_event)  # specific event
+    comments = Comment.query.filter_by(event_id=event_id)
+    return render_template('show_event.html', title=_event.title, event=_event, comments=comments)  # specific event
 
 
 @app.route("/event/<int:event_id>/update", methods=['GET', 'POST'])  # specific event edit
@@ -231,6 +245,9 @@ def update_event(event_id):
         _event.title = formupload.title.data
         _event.price = formupload.price.data
         _event.address = formupload.address.data
+        _event.music = Music.query.get_or_404(
+            formupload.music_type.data.id
+        )
         db.session.commit()
         flash('Your post has been updated!', 'success')
         return redirect(url_for('post_events'))
@@ -238,6 +255,7 @@ def update_event(event_id):
         formupload.title.data = _event.title
         formupload.price.data = _event.price
         formupload.category.data = _event.category
+        # formupload.music.data = _event.music
         formupload.address.data = _event.address
         formupload.event_id = event_id
         formupload.organizer.data = _event.owner
@@ -267,7 +285,8 @@ def events_page():
 @app.route('/event/followed', methods=['GET', 'POST'])
 @login_required
 def followed_event_page():
-    events = current_user.followed_posts().all()
+    # events = current_user.followed_posts().all()
+    events = current_user.liked_posts()
     return render_template('event_followed.html', events=events)
 
 
@@ -286,6 +305,31 @@ def create_category():  # admin stuff
     if form.errors: flash(form.errors)
     return render_template('category-create.html', form=form)
 
+@app.route('/event/<int:event_id>/like', methods=['GET'])
+def like_event(event_id):
+    _event = Event.query.get_or_404(event_id)
+    if current_user.like(_event):
+        flash('Liked event!', 'success')
+    else:
+        flash('You already liked this post', 'warning')
+    return redirect(url_for('events_page'))
+
+@app.route('/event/<int:event_id>/unlike', methods=['GET'])
+def unlike_event(event_id):
+    _event = Event.query.get_or_404(event_id)
+    current_user.unlike(_event)
+    flash('Unliked event!', 'success')
+    return redirect(url_for('events_page'))
+
+@app.route('/event/<int:event_id>/comment', methods=['POST'])
+def add_comment(event_id):
+    comment_text = request.form['comment']
+    event = Event.query.get_or_404(event_id)
+    comment = Comment(comment_text, current_user, event)
+    db.session.add(comment)
+    db.session.commit()
+    flash('Comment submitted!', 'success')
+    return redirect(url_for('event', event_id=event_id))
 
 @app.route('/business')
 def business():
