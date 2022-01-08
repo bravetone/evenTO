@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="evenTO" uuid="eca6a7a2-9eb9-4be0-88fc-d4bca93ace61">
+    <data-source source="LOCAL" name="evenTO.db" uuid="b3c47ba8-4c6c-4ff2-ab54-84eb3ab45f0c">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
       <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/website/evenTO.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
-      <libraries>
-        <library>
-          <url>file://$APPLICATION_CONFIG_DIR$/jdbc-drivers/Xerial SQLiteJDBC/3.34.0/sqlite-jdbc-3.34.0.jar</url>
-        </library>
-      </libraries>
     </data-source>
     <data-source source="LOCAL" name="website_flask" uuid="145d4e6d-4745-4183-8fd2-d06f58623dfb">
       <driver-ref>sqlite.xerial</driver-ref>
