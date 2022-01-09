@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-  <div class="breadcrumbs">
+    <div class="breadcrumbs">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 col-md-6 col-12">
@@ -16,58 +16,82 @@
                 </div>
             </div>
         </div>
-  </div>
-  <form method="POST" action="{{ url_for('post_events') }}" role="form" enctype="multipart/form-data">
-       {{ formupload.hidden_tag() }}
-    <div class="search-form wow fadeInUp" data-wow-delay=".7s" style="background: none; margin-top:50px; margin-bottom:50px">
-
-      <div class="form-group">
-         {{ formupload.title.label(style="color: black")  }} {{ formupload.title(class='form-control' )}}
-      </div>
-      <div class="form-group col-md-6">
-      <label for="organizer" style="color: black" >Organizer</label>
-     <!-- <input type="text" class="form-control" id="Organizer"> -->
-
-      <div> {{ formupload.label }}  </div>
-      <div> {{ formupload.organizer._value()}}</div>
-
     </div>
-      <div class="form-group">
-          {{ formupload.csrf_token }}
-          {{ formupload.category.label(style="color: black") }} {{ formupload.category()}}
-      </div>
-        <div class="form-group">
-            {{  formupload.music_type.label(style="color: black") }} {{ formupload.music_type() }}
-        </div>
-      <div class="form-group">
-          {{ formupload.price.label(style="color: black")  }} {{ formupload.price(class='form-control' )}}
-      </div>
-      <div class="form-group">
-        {{ formupload.address.label(style="color: black")  }} {{ formupload.address(class='form-control' )}}
-      </div>
-      <div class="form-group">
-        {{ formupload.image.label(style="color: black") }}: {{ formupload.image(style='display:inline;') }}
-      </div>
+    <div class="container-fluid">
+        <div class="search-form wow fadeInUp row justify-content-center" data-wow-delay=".7s"
+             style="background: none; margin-top:50px; margin-bottom:50px">
+            <div class="col-md-4">
+                <form method="POST" action="{{ url_for('post_events') }}" role="form" enctype="multipart/form-data"
+                      class="form">
+                    {#                    {{ formupload.hidden_tag() }}#}
 
-      <div class="form-group">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="gridCheck">
-          <label class="form-check-label" for="gridCheck" style="color: black">
-             I agree to the Terms of Service and Privacy Policy
-          </label>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            {{ formupload.title.label(style="color: black", class='input-group-text') }}
+                        </div>
+                        {{ formupload.title(class='form-control') }}
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label for="organizer" style="color: black" class="input-group-text">Organizer</label>
+                        </div>
+                        {{ formupload.organizer(class='form-control') }}
+                        <!-- <input type="text" class="form-control" id="Organizer"> -->
+
+                        {#                        <div> {{ formupload.label }}  </div>#}
+                        {#                        <div> {{ formupload.organizer._value() }}</div>#}
+
+                    </div>
+                    <div class="row">
+                        {{ formupload.csrf_token }}
+                        {{ formupload.category.label(style="color: black", class='col-sm-2 col-form-label') }}
+                        <div class="col-sm-4">
+                            {{ formupload.category(class='form-control') }}
+                        </div>
+                        {{ formupload.music_type.label(style="color: black", class='col-sm-2 col-form-label') }}
+                        <div class="col-sm-4">
+                            {{ formupload.music_type(class='form-control') }}
+                        </div>
+                    </div>
+                    <div class="input-group mb-3 mt-3">
+                        <div class="input-group-prepend">
+                            {{ formupload.price.label(style="color: black", class='input-group-text') }}
+                        </div>
+                        {{ formupload.price(class='form-control' ) }}
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            {{ formupload.address.label(style="color: black", class='input-group-text') }}
+                        </div>
+                        {{ formupload.address(class='form-control') }}
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4">{{ formupload.image.label(style="color: black") }}:</div>
+                        <div class="col-sm-4">{{ formupload.image(style='display:inline;') }}</div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="gridCheck">
+                            <label class="form-check-label" for="gridCheck" style="color: black">
+                                I agree to the Terms of Service and Privacy Policy
+                            </label>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        {{ formupload.upload(class="btn btn-light",style="color: black") }}
+                    </div>
+                </form>
+            </div>
         </div>
-      </div>
-      <div class="form-group">
-        {{ formupload.upload(class="btn btn--primary",style="color: black") }}
-      </div>
     </div>
-  </form>
-{% include "bottom.html" %}
+    {% include "bottom.html" %}
 
-  <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
-  <script src="{{ url_for('static',filename='js/wow.min.js') }}"></script>
-  <script src="{{ url_for('static',filename='js/tiny-slider.js') }}"></script>
-  <script src="{{ url_for('static',filename='js/glightbox.min.js') }}"></script>
-  <script src="{{ url_for('static',filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/wow.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/tiny-slider.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/glightbox.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/main.js') }}"></script>
 
 {% endblock content %}
