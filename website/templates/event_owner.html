@@ -32,7 +32,7 @@
 
         <div class="single-head">
             <div class="row">
-                {% for evnt in event %}
+                {% for evnt in events %}
                 <div class="col-lg-4 col-md-6 col-12">
                     <!-- Start Single Grid -->
 
@@ -48,7 +48,7 @@
                                     <div class="author-image">
                                         <a href=""><img src="/static/images/items-grid/author-3.jpg" alt="#">
                                             <span>
-                                                {{ evnt.owner }}
+                                                {{ current_user.username }}
                                             </span> </a>
 
                                     </div>
@@ -64,12 +64,14 @@
                                     </h3>
                                     <p>Posted: {{ moment(evnt.date_posted).format('LLL') }}</p>
 
-                                    <a href="javascript:void(0)" class="tag">{{ evnt.category }} </a>
-                                    <br />
-                                    <a href="javascript:void(0)" class="tag">{{ evnt.music }} </a>
+                                    <a href="javascript:void(0)" class="tag">{{ evnt.category}} </a>
                                     <ul class="rating">
-                                        <li><i class="lni lni-heart-filled"></i></li>
-                                        <li><a href="javascript:void(0)">{{ evnt.likes() }}</a></li>
+                                        <li><i class="lni lni-star-filled"></i></li>
+                                        <li><i class="lni lni-star-filled"></i></li>
+                                        <li><i class="lni lni-star-filled"></i></li>
+                                        <li><i class="lni lni-star-filled"></i></li>
+                                        <li><i class="lni lni-star-filled"></i></li>
+                                        <li><a href="javascript:void(0)">(55)</a></li>
                                     </ul>
                                     <ul class="info-list">
                                         <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> {{
@@ -79,15 +81,9 @@
                                 </div>
                                 <div class="bottom-content">
                                     <p class="price">Start From: <span> {{ evnt.price }}$ </span></p>
-                                {% if current_user.is_liked(evnt) %}
-                                    <a href="{{ url_for('unlike_event', event_id=evnt.id) }}" class="like"><i class="lni lni-heart-filled"></i></a>
-                                {% else %}
-                                    <a href="{{ url_for('like_event', event_id=evnt.id ) }}" class="like"><i class="lni lni-heart"></i></a>
-                                {% endif %}
-                                    {%  if current_user.username == evnt.owner %}
+                                    <a href="javascript:void(0)" class="like"><i class="lni lni-heart"></i></a>
                                     <a href="{{ url_for('update_event',event_id = evnt.id) }}"
                                         class="btn btn-outline-secondary btn-sm">Edit Event</a>
-                                    {% endif %}
                                 </div>
 
 

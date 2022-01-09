@@ -19,25 +19,30 @@
     </div>
 
 
-    <section id="login" class="call-register overlay section">
-    <div style="alignment: center">
-        <div class="search-form wow fadeInUp" data-wow-delay=".7s" style="background: none">
-                <div class="col-lg-4 col-md-4 col-12 p-0">
-                        <form method="post">
-                        {{ form.username.label }}
-                        {{ form.username() }}
-                        {{ form.password.label }}
-                        {{ form.password() }}
+    <section id="login" class="call-register overlay section container-fluid">
+        <h1 style="text-align:center; color:white">Login</h1>
+        <div class="search-form wow fadeInUp row justify-content-center" data-wow-delay=".7s" style="background: none">
+                <div class="col-4 p-0" style="text-align: center">
+                    <form method="post" class="form form-horizontal">
+                        <div class="input-group mb-3" style="margin-bottom: 10px">
+                            <div class="input-group-prepend" style="margin-right: 10px">
+                        {{ form.username.label(class='input-group-text') }}
+                            </div>
+                                {{ form.username(class='form-control') }}
+                        </div>
+                    <div class="input-group mb-3" style="margin-bottom: 10px">
+                        <div class="input-group-prepend" style="margin-right: 10px">
+                        {{ form.password.label(class='input-group-text') }}
+                        </div>
+                        {{ form.password(class='form-control') }}
+                    </div>
                         {{ form.hidden_tag() }}
                         {% for error in form.submit.errors %}
                             {{ error }}
                         {% endfor %}
-                        {{ form.submit() }}
-                        </form>
-                    </p>
-                </div>
+                        {{ form.submit(class='form-control') }}
+                    </form>
             </div>
-        </div>
     </section>
 
 

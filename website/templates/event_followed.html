@@ -18,89 +18,107 @@
         </div>
   </div>
   <!-- Start Items Grid Area -->
-    <section id="latest_events" class="items-grid section custom-padding">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="section-title">
-                        <h2 class="wow fadeInUp" data-wow-delay=".4s">Followed Events</h2>
-                        <p class="wow fadeInUp" data-wow-delay=".6s">There are many variations of passages of Lorem
-                            Ipsum available, but the majority have suffered alteration in some form.</p>
-                    </div>
+<section id="latest_events" class="items-grid section custom-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title">
+                    <h2 class="wow fadeInUp" data-wow-delay=".4s">Followed Events</h2>
+                    <p class="wow fadeInUp" data-wow-delay=".6s">There are many variations of passages of Lorem
+                        Ipsum available, but the majority have suffered alteration in some form.</p>
                 </div>
             </div>
+        </div>
 
-            <div class="single-head">
-                <div class="row">
-                    <div class="col-lg-4 col-md-6 col-12">
-                        <!-- Start Single Grid -->
+        <div class="single-head">
+            <div class="row">
+                {% for evnt in events %}
+                <div class="col-lg-4 col-md-6 col-12">
+                    <!-- Start Single Grid -->
 
-                          <div class="single-grid wow fadeInUp" data-wow-delay=".2s">
-                            {% for evnt in events %}
+                    <div class="single-grid wow fadeInUp" data-wow-delay=".2s">
+
+                        <div class="grid-item">
+
                             <div class="image">
-                                <a href="item-details.html" ><img class="thumbnail"  src="{{ url_for('static', filename='uploads/' + evnt.image_file) }}" alt="#"/> </a>
+                                <a href="item-details.html"><img class="thumbnail"
+                                        src="{{ url_for('static', filename='uploads/' + evnt.image_file) }}" alt="#" />
+                                </a>
                                 <div class="author">
                                     <div class="author-image">
-                                       <a href=""><img src="/static/images/items-grid/author-3.jpg" alt="#">
+                                        <a href=""><img src="/static/images/items-grid/author-3.jpg" alt="#">
                                             <span>
-                                            {{ current_user.username }}
+                                                {{ evnt.owner }}
                                             </span> </a>
 
                                     </div>
+                                    <p class="sale">New Listing</p>
                                 </div>
+                                <p class="item-position"><i class="lni lni-bolt"></i> Featured</p>
                             </div>
 
                             <div class="content">
                                 <div class="top-content">
                                     <h3 class="title">
-                                        <a href="">{{ evnt.title }}</a>
+                                        <a href="{{ url_for('event', event_id=evnt.id) }}">{{ evnt.title }}</a>
                                     </h3>
                                     <p>Posted: {{ moment(evnt.date_posted).format('LLL') }}</p>
 
-                                    <a href="javascript:void(0)" class="tag">{{ evnt.category}} </a>
+                                    <a href="javascript:void(0)" class="tag">{{ evnt.category }} </a>
+                                    <br />
+                                    <a href="javascript:void(0)" class="tag">{{ evnt.music }} </a>
                                     <ul class="rating">
                                         <li><i class="lni lni-star-filled"></i></li>
                                         <li><i class="lni lni-star-filled"></i></li>
                                         <li><i class="lni lni-star-filled"></i></li>
                                         <li><i class="lni lni-star-filled"></i></li>
                                         <li><i class="lni lni-star-filled"></i></li>
-                                        <li><a href="javascript:void(0)">(55)</a></li>
+                                        <li><a href="javascript:void(0)">({{ evnt.likes() }})</a></li>
                                     </ul>
                                     <ul class="info-list">
-                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> {{ evnt.address }}</a></li>
+                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> {{
+                                                evnt.address }}</a></li>
 
                                     </ul>
                                 </div>
                                 <div class="bottom-content">
-                                    <p class="price">Start From: <span> {{ evnt.price }}$  </span></p>
-                                    <a href="javascript:void(0)" class="like"><i class="lni lni-heart"></i></a>
-                                    <a href="{{ url_for('update_event',event_id = evnt.id) }}" class="btn btn-outline-secondary btn-sm">Edit Event</a>
+                                    <p class="price">Start From: <span> {{ evnt.price }}$ </span></p>
+                                {% if current_user.is_liked(evnt) %}
+                                    <a href="{{ url_for('unlike_event', event_id=evnt.id) }}" class="like"><i class="lni lni-heart-filled"></i></a>
+                                {% else %}
+                                    <a href="{{ url_for('like_event', event_id=evnt.id ) }}" class="like"><i class="lni lni-heart"></i></a>
+                                {% endif %}
+                                    {%  if current_user.username == evnt.owner %}
+                                    <a href="{{ url_for('update_event',event_id = evnt.id) }}"
+                                        class="btn btn-outline-secondary btn-sm">Edit Event</a>
+                                    {% endif %}
                                 </div>
 
 
 
                             </div>
-                            {% endfor %}
                         </div>
-                        <!-- End Single Grid -->
                     </div>
-
-
+                    <!-- End Single Grid -->
                 </div>
+                {% endfor %}
+
+
             </div>
         </div>
-    </section>
-    <!-- /End Items Grid Area -->
-    <!-- Start Items Grid Area -->
+    </div>
+</section>
+<!-- /End Items Grid Area -->
+<!-- Start Items Grid Area -->
 
-    <!-- /End Items Grid Area -->
+<!-- /End Items Grid Area -->
 
 {% include "bottom.html" %}
 
-    <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
-    <script src="{{ url_for('static',filename='js/wow.min.js') }}"></script>
-    <script src="{{ url_for('static',filename='js/tiny-slider.js') }}"></script>
-    <script src="{{ url_for('static',filename='js/glightbox.min.js') }}"></script>
-    <script src="{{ url_for('static',filename='js/main.js') }}"></script>
+<script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static',filename='js/wow.min.js') }}"></script>
+<script src="{{ url_for('static',filename='js/tiny-slider.js') }}"></script>
+<script src="{{ url_for('static',filename='js/glightbox.min.js') }}"></script>
+<script src="{{ url_for('static',filename='js/main.js') }}"></script>
 
 {% endblock %}
