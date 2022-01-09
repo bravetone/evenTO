@@ -107,10 +107,10 @@ def user(username):
 
     if user.role_id == 2:
         events = user.owned_events()
-        print(events)
-        return render_template('event_owner.html', events=events)
+        return render_template('user.html', user=user, role="event_owner", events=events)
     else:
-        return render_template('user.html', user=user, posts=posts,role=role)
+        events = user.liked_posts()
+        return render_template('user.html', user=user, role="user", events=events)
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
