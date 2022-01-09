@@ -178,7 +178,8 @@ def logout_page():
 @app.route('/', methods=['GET', 'POST'])
 def index():
     formupload = UploadForm()
-    return render_template('index.html', formupload=formupload)
+    latest_events = Event.query.order_by(Event.date_posted.desc()).limit(3).all()
+    return render_template('index.html', formupload=formupload, events=latest_events)
 
 
 def allowed_file(filename):

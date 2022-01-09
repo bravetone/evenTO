@@ -74,7 +74,7 @@ class CategoryField(SelectField):
 class SearchForm(FlaskForm):
     #choices = [("Type",UploadForm.type),("Location",UploadForm.location)]
     #select = SelectField('Type', choices=choices)
-    searched = StringField(label='Searched:', validators=[DataRequired(), Length(min=3, max=10)])
+    searched = StringField(label='Searched:')
     category = QuerySelectField(query_factory=choice_query, allow_blank=False, label='Category')
     submit = SubmitField('Submit')
 
