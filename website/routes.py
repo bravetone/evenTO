@@ -279,7 +279,7 @@ def delete_event(post_id):
 
 @app.route('/event', methods=['GET', 'POST'])  # main page for events
 def events_page():
-    event = Event.query.order_by().all()
+    event = Event.query.order_by(Event.likes.desc()).all()
     return render_template('event.html', event=event)
 
 
