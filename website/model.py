@@ -1,8 +1,8 @@
 from datetime import datetime
-
-from flask import current_app
-from flask_login import UserMixin, AnonymousUserMixin, current_user
 from hashlib import md5
+
+from flask_login import UserMixin
+
 from website import bcrypt
 from website import db, login_manager
 
@@ -15,6 +15,8 @@ followers = db.Table('followers',
                      db.Column('follower_id', db.Integer, db.ForeignKey('users.id')),
                      db.Column('followed_id', db.Integer, db.ForeignKey('users.id'))
                      )
+
+
 # No need to think like user should follow eventowner kind of relation because on the
 # website users will only see the event owners anyway.
 # likes = db.Table('likes',
@@ -42,11 +44,7 @@ class Event(db.Model):
     category = db.relationship(
         'Category', backref=db.backref('event', lazy='dynamic'))
     music = db.relationship('Music', backref=db.backref('event', lazy='dynamic'))
-
-    # description = db.Column(db.String(length=1024), nullable=True)
-    # date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     image_file = db.Column(db.String(20))
-
     owner = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def __init__(self, owner, title, price, address, category, music, image_file):
@@ -65,7 +63,6 @@ class Event(db.Model):
         return EventLike.query.filter(
             EventLike.event_id == self.id
         ).count()
-
 
 
 # eventOwner owns the events
@@ -161,7 +158,6 @@ class User(db.Model, UserMixin):
 
     def owned_events(self):
         return Event.query.filter(Event.owner == self.username)
-
 
     # def events_owned(self):
     #     events = Event.query.join(User).filter(event.owner == user.id)

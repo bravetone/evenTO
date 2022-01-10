@@ -7,18 +7,12 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_moment import Moment
 
-
-
-
-
-
 # upload image
 from flask_uploads import UploadSet
 from flask_uploads import configure_uploads
 from flask_uploads import IMAGES, patch_request_class
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug import secure_filename, FileStorage
-
 
 app = Flask(__name__)
 
@@ -37,19 +31,16 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOADED_PHOTOS_DEST'] = os.getcwd() + "/website/static/uploads"
 app.config['FLASKY_POSTS_PER_PAGE'] = 10
 app.config['FLASKY_ADMIN'] = os.environ.get('FLASKY_ADMIN')
-#Admin
-app.config['EVENTO_ADMIN']=os.environ.get('EVENTO_ADMIN')
+# Admin
+app.config['EVENTO_ADMIN'] = os.environ.get('EVENTO_ADMIN')
 app.config['EVENTO_MAIL_SUBJECT_PREFIX'] = '[evenTO]'
-app.config['EVENTO_MAIL_SENDER'] =  'evenTO Admin <admin@evento.com>'
-
-
+app.config['EVENTO_MAIL_SENDER'] = 'evenTO Admin <admin@evento.com>'
 
 db = SQLAlchemy(app)
 # MAIL
 mail = Mail(app)
 bcrypt = Bcrypt(app)
 moment = Moment(app)
-
 
 login_manager = LoginManager(app)
 login_manager.login_view = "login_page"
@@ -61,8 +52,4 @@ photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 patch_request_class(app)
 
-
 from website import routes
-
-
-
