@@ -15,8 +15,8 @@
                         <!-- Start Search Form -->
                         <div class="search-form wow fadeInUp" data-wow-delay=".7s">
                             <form method="post" action="{{ url_for('search') }}">
-                            <div class="row">
-                                <div class="col-lg-4 col-md-4 col-12 p-0">
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-4 col-12 p-0">
                                         {{ form.hidden_tag() }}
                                         <div class="search-input">
                                             <label for="keyword"><i class="lni lni-search-alt theme-color"></i></label>
@@ -28,33 +28,33 @@
                                         </div>
 
 
-                                </div>
-                                <div class="col-lg-3 col-md-3 col-12 p-0">
-                                    <div class="search-input">
-                                        <label for="Category"><i class="lni lni-grid-alt theme-color"></i></label>
+                                    </div>
+                                    <div class="col-lg-3 col-md-3 col-12 p-0">
+                                        <div class="search-input">
+                                            <label for="Category"><i class="lni lni-grid-alt theme-color"></i></label>
 
                                             {{ formupload.csrf_token }}
                                             {{ formupload.category }}
 
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-3 col-md-3 col-12 p-0">
-                                    <div class="search-input">
-                                        <label for="location"><i class="lni lni-map-marker theme-color"></i></label>
-                                        <select name="location" id="location">
+                                    <div class="col-lg-3 col-md-3 col-12 p-0">
+                                        <div class="search-input">
+                                            <label for="location"><i class="lni lni-map-marker theme-color"></i></label>
+                                            <select name="location" id="location">
 
-                                            <option value="" selected disabled>Turin </option>
-                                        </select>
+                                                <option value="" selected disabled>Turin</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-12 p-0">
+                                        <div class="search-btn button">
+                                            <button class="btn" type="submit"><i class="lni lni-search-alt"
+                                                                                 type="submit"></i> Search
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-2 col-md-2 col-12 p-0">
-                                    <div class="search-btn button">
-                                        <button class="btn" type="submit"><i class="lni lni-search-alt"
-                                                                             type="submit"></i> Search
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
                             </form>
                         </div>
                         <!-- End Search Form -->
@@ -126,58 +126,12 @@
                             Ipsum available, but the majority have suffered alteration in some form.</p>
                     </div>
                 </div>
-            </div><div class="single-head">
+            </div>
+            <div class="single-head">
                 <div class="row">
-                    <div class="col-lg-4 col-md-6 col-12">
-                        <!-- Start Single Grid -->
-
-                          <div class="single-grid wow fadeInUp" data-wow-delay=".2s">
-                            {% for evnt in event %}
-                            <div class="image">
-                                <a href="item-details.html" ><img class="thumbnail"  src="{{ url_for('static', filename='uploads/' + evnt.image_file) }}" alt="#"/> </a>
-                                <div class="author">
-                                    <div class="author-image">
-                                       <a href="javascript:void(0)"><img src="/static/images/items-grid/author-3.jpg" alt="#">
-                                            <span>
-                                            {{ current_user.username }}
-                                            </span> </a>
-
-                                    </div>
-                                    <p class="sale">New Listing</p>
-                                </div>
-                                <p class="item-position"><i class="lni lni-bolt"></i> Featured</p>
-                            </div>
-
-                            <div class="content">
-                                <div class="top-content">
-                                    <h3 class="title">
-                                        <a href="item-details.html">{{ evnt.title }}</a>
-                                    </h3>
-                                    <p>Posted: {{ moment(evnt.date_posted).format('LLL') }}</p>
-
-                                    <a href="javascript:void(0)" class="tag">{{ evnt.category}} </a>
-                                    <ul class="rating">
-                                        <li><i class="lni lni-star-filled"></i></li>
-                                        <li><i class="lni lni-star-filled"></i></li>
-                                        <li><i class="lni lni-star-filled"></i></li>
-                                        <li><i class="lni lni-star-filled"></i></li>
-                                        <li><i class="lni lni-star-filled"></i></li>
-                                        <li><a href="javascript:void(0)">(55)</a></li>
-                                    </ul>
-                                    <ul class="info-list">
-                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> {{ evnt.address }}</a></li>
-
-                                    </ul>
-                                </div>
-                                <div class="bottom-content">
-                                    <p class="price">Start From: <span> {{ evnt.price }}$  </span></p>
-                                    <a href="javascript:void(0)" class="like"><i class="lni lni-heart"></i></a>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        <!-- End Single Grid -->
-                    </div>
+                    {% for evnt in events %}
+                        {% include "event_card.html" %}
+                    {% endfor %}
 
 
                 </div>

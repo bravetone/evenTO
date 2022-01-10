@@ -10,8 +10,8 @@ from website.form import RegisterForm, SearchForm, UploadForm, LoginForm, Catego
 from website.model import User, Event, Category, Role, Music, Comment
 
 
-# @app.before_first_request
-# def create_db():
+#@app.before_first_request
+#def create_db():
 #    db.drop_all()
 #    db.create_all()
 #    role_user = Role(role_name="User")
@@ -58,14 +58,14 @@ def register_page():
     if form.validate_on_submit():
         password_hash = form.password.data
         new_user = User(
-            name=form.name.data,
-            family_name=form.family_name.data,
-            username=form.username.data,
-            mail=form.mail.data,
-            password=password_hash,
-            role=Role.query.get_or_404(
-                form.role.data.id),
-        )
+                name=form.name.data,
+                family_name=form.family_name.data,
+                username=form.username.data,
+                mail=form.mail.data,
+                password=password_hash,
+                role=Role.query.get_or_404(
+                    form.role.data.id),
+            )
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
@@ -107,10 +107,10 @@ def user(username):
 
     if user.role_id == 2:
         events = user.owned_events()
-        print(events)
-        return render_template('event_owner.html', events=events)
+        return render_template('user.html', user=user, role="event_owner", events=events)
     else:
-        return render_template('user.html', user=user, posts=posts, role=role)
+        events = user.liked_posts()
+        return render_template('user.html', user=user, role="user", events=events)
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -178,7 +178,8 @@ def logout_page():
 @app.route('/', methods=['GET', 'POST'])
 def index():
     formupload = UploadForm()
-    return render_template('index.html', formupload=formupload)
+    latest_events = Event.query.order_by(Event.date_posted.desc()).limit(3).all()
+    return render_template('index.html', formupload=formupload, events=latest_events)
 
 
 def allowed_file(filename):
@@ -211,7 +212,7 @@ def post_events():
             filename = secure_filename(image.filename)
             image.save(os.path.join(app.config['UPLOADED_PHOTOS_DEST'], filename))
 
-        events = Event(owner, title,
+        events = Event(owner,title,
                        price,
                        address, category, music_type, filename)
         db.session.add(events)
@@ -261,7 +262,7 @@ def update_event(event_id):
         formupload.organizer.data = _event.owner
 
         return render_template('edit_post.html', title='Update Event',
-                               formupload=formupload, legend='Update Event')
+                           formupload=formupload, legend='Update Event')
 
 
 @app.route("/event/<int:event_id>/delete", methods=['POST'])  # specific event delete
@@ -278,7 +279,7 @@ def delete_event(post_id):
 
 @app.route('/event', methods=['GET', 'POST'])  # main page for events
 def events_page():
-    event = Event.query.all()
+    event = Event.query.order_by(Event.likes.desc()).all()
     return render_template('event.html', event=event)
 
 
@@ -305,7 +306,6 @@ def create_category():  # admin stuff
     if form.errors: flash(form.errors)
     return render_template('category-create.html', form=form)
 
-
 @app.route('/event/<int:event_id>/like', methods=['GET'])
 def like_event(event_id):
     _event = Event.query.get_or_404(event_id)
@@ -315,14 +315,12 @@ def like_event(event_id):
         flash('You already liked this post', 'warning')
     return redirect(url_for('events_page'))
 
-
 @app.route('/event/<int:event_id>/unlike', methods=['GET'])
 def unlike_event(event_id):
     _event = Event.query.get_or_404(event_id)
     current_user.unlike(_event)
     flash('Unliked event!', 'success')
     return redirect(url_for('events_page'))
-
 
 @app.route('/event/<int:event_id>/comment', methods=['POST'])
 def add_comment(event_id):
@@ -333,7 +331,6 @@ def add_comment(event_id):
     db.session.commit()
     flash('Comment submitted!', 'success')
     return redirect(url_for('event', event_id=event_id))
-
 
 @app.route('/business')
 def business():

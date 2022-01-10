@@ -46,7 +46,7 @@ class UploadForm(FlaskForm):
     #types = [("Cafe","Cafe"), ("Restaurant","Restaurant"), ("Club","Club")]
     #event_type= RadioField("Type", choices=types)
     category = QuerySelectField(query_factory=choice_query, allow_blank=False, label='Category')
-    music_type = QuerySelectField(query_factory=music_query, allow_blank=False, label='Music Type')
+    music_type = QuerySelectField(query_factory=music_query, allow_blank=False, label='Music')
 
     #description = StringField(label='description',validators=[DataRequired(), Length(min=1, max=250)])
     address = StringField(label='Address',validators=[InputRequired(), Length(min=1, max=50)])
@@ -74,7 +74,7 @@ class CategoryField(SelectField):
 class SearchForm(FlaskForm):
     #choices = [("Type",UploadForm.type),("Location",UploadForm.location)]
     #select = SelectField('Type', choices=choices)
-    searched = StringField(label='Searched:', validators=[DataRequired(), Length(min=3, max=10)])
+    searched = StringField(label='Searched:')
     category = QuerySelectField(query_factory=choice_query, allow_blank=False, label='Category')
     submit = SubmitField('Submit')
 

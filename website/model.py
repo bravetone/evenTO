@@ -5,6 +5,7 @@ from flask_login import UserMixin
 
 from website import bcrypt
 from website import db, login_manager
+from sqlalchemy.ext.hybrid import hybrid_property
 
 
 def printf(x):
@@ -59,11 +60,17 @@ class Event(db.Model):
     def __repr__(self):
         return '{}'.format(self.title)
 
+    @hybrid_property
     def likes(self):
         return EventLike.query.filter(
             EventLike.event_id == self.id
         ).count()
 
+    @likes.expression
+    def likes(cls):
+        return db.select([db.func.count(EventLike.user_id)])\
+            .where(EventLike.event_id == cls.id)\
+            .label('total_likes')
 
 # eventOwner owns the events
 class User(db.Model, UserMixin):
