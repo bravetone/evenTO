@@ -123,14 +123,19 @@ def edit_profile():
         current_user.username = form.username.data
         current_user.mail = form.mail.data
 
+        if form.password.data:
+            current_user.password = form.password.data
+
         db.session.commit()
         flash('Your changes have been saved.')
         return redirect(url_for('edit_profile'))
     elif request.method == 'GET':
+
         form.name.data = current_user.name
         form.family_name.data = current_user.family_name
         form.username.data = current_user.username
         form.mail.data = current_user.mail
+
     return render_template('edit_profile.html', title='Edit Profile', form=form)
 
 

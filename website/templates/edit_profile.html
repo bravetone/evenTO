@@ -17,42 +17,73 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-4 col-md-4 col-12 p-0">
-            <form method="post">
-                 {{ form.hidden_tag() }}
-                <div class="control-group form-group" >
-                    <div class="controls">
-                        {{ form.name.label }} {{ form.name(class='form-control'  ) }}
+    <div class="container-fluid">
+        <form method="post">
+            {{ form.hidden_tag() }}
+            <div class="control-group row justify-content-center">
+                <div class="col-md-4 mb-4 mt-4">
+                    <div class="controls mb-3">
+                        <div class="input-group">
+{#                            <div class="form-group" style="display: none">#}
+{#                                {{ form.id() }}#}
+{#                            </div>#}
+                            <div class="input-group-prepend">{{ form.name.label(class='input-group-text') }}</div>
+                            {{ form.name(class='form-control') }}
+                        </div>
 
                         {% for error in form.name.errors %}
                             <div class="alert-danger">{{ error }}</div>
                         {% endfor %}
 
                     </div>
-                    <div class="controls">
-                        {{ form.family_name.label }} {{ form.family_name(class='form-control') }}
-                        {% for error in form.family_name.errors %}
-                            <div class="alert-danger">{{ error }}</div>
-                        {% endfor %}
+                    <div class="controls mb-3">
+                        <div class="input-group">
+                            <div class="input-group-prepend">{{ form.family_name.label(class='input-group-text') }}</div>
+                            {{ form.family_name(class='form-control') }}
+                            {% for error in form.family_name.errors %}
+                                <div class="alert-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
                     </div>
-                    <div class="controls">{{ form.username.label }} {{ form.username(class='form-control') }}
+                    <div class="controls  mb-3">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                {{ form.username.label(class='input-group-text') }}
+                            </div>
+                            {{ form.username(class='form-control') }}
+                        </div>
                         {% for error in form.username.errors %}
                             <div class="alert-danger">{{ error }}</div>
                         {% endfor %}
                     </div>
-                    <div class="controls">{{ form.mail.label }} {{ form.mail(class='form-control') }}
+                    <div class="controls mb-3">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                {{ form.mail.label(class='input-group-text') }}
+                            </div>
+                            {{ form.mail(class='form-control') }}
+                        </div>
                         {% for error in form.mail.errors %}
                             <div class="alert-danger">{{ error }}</div>
                         {% endfor %}
                     </div>
+                    <div class="controls mb-3">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                {{ form.password.label(class='input-group-text') }}
+                            </div>
+                            {{ form.password(class='form-control') }}
+                        </div>
+                    </div>
                     <div class="controls">{{ form.hidden_tag() }}
                         {{ form.submit(class='btn btn-register'  ) }}</div>
                 </div>
-            </form>
+            </div>
+        </form>
     </div>
 
 
-{% include 'bottom.html' %}
+    {% include 'bottom.html' %}
 
     <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static',filename='js/wow.min.js') }}"></script>
