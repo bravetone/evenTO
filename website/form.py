@@ -51,7 +51,7 @@ class UploadForm(FlaskForm):
 
     #description = StringField(label='description',validators=[DataRequired(), Length(min=1, max=250)])
     address = StringField(label='Address',validators=[InputRequired(), Length(min=1, max=50)])
-    image = FileField(label='Image', validators=[DataRequired()])
+    image = FileField(label='Image')
     price = DecimalField(label='Price:', validators=[InputRequired(), NumberRange(min=1, max=100)])
     upload = SubmitField(label='Post')
 
