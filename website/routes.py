@@ -7,11 +7,11 @@ from werkzeug.utils import secure_filename
 from website import app, ALLOWED_EXTENSIONS
 from website import db
 from website.form import RegisterForm, SearchForm, UploadForm, LoginForm, CategoryForm, EditProfileForm
-from website.model import User, Event, Category, Role
+from website.model import User, Event, Category, Role, Music, Comment
 
 
-#@app.before_first_request
-#def create_db():
+# @app.before_first_request
+# def create_db():
 #    db.drop_all()
 #    db.create_all()
 #    role_user = Role(role_name="User")
@@ -36,14 +36,18 @@ def search():
     events = Event.query.order_by(Event.date_posted)
     if form.validate_on_submit():
         # Get data from submitted form
-        events.searched = form.searched.data
+        searched = form.searched.data
+        category = form.category.data.name
         # Query the Database
-        events = events.filter(Event.title.like('%' + events.searched + '%'))
+        events = events.filter(Event.title.like('%' + searched + '%'))
+        # category_name = Event.category
+        events = events.filter(Event.category.has(name=category))
+        # events = events.filter(Event.)
         events = events.order_by(Event.title).all()
 
         return render_template("search.html",
                                form=form,
-                               searched=events.searched,
+                               searched=searched,
                                events=events)
 
 
@@ -54,14 +58,14 @@ def register_page():
     if form.validate_on_submit():
         password_hash = form.password.data
         new_user = User(
-                name=form.name.data,
-                family_name=form.family_name.data,
-                username=form.username.data,
-                mail=form.mail.data,
-                password=password_hash,
-                role=Role.query.get_or_404(
-                    form.role.data.id),
-            )
+            name=form.name.data,
+            family_name=form.family_name.data,
+            username=form.username.data,
+            mail=form.mail.data,
+            password=password_hash,
+            role=Role.query.get_or_404(
+                form.role.data.id),
+        )
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
@@ -100,7 +104,13 @@ def user(username):
         {'author': user, 'body': 'Test post #1', 'role': role},
         {'author': user, 'body': 'Test post #2'}
     ]
-    return render_template('user.html', user=user, posts=posts,role=role)
+
+    if user.role_id == 2:
+        events = user.owned_events()
+        return render_template('user.html', user=user, role="event_owner", events=events)
+    else:
+        events = user.liked_posts()
+        return render_template('user.html', user=user, role="user", events=events)
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -113,14 +123,19 @@ def edit_profile():
         current_user.username = form.username.data
         current_user.mail = form.mail.data
 
+        if form.password.data:
+            current_user.password = form.password.data
+
         db.session.commit()
         flash('Your changes have been saved.')
         return redirect(url_for('edit_profile'))
     elif request.method == 'GET':
+
         form.name.data = current_user.name
         form.family_name.data = current_user.family_name
         form.username.data = current_user.username
         form.mail.data = current_user.mail
+
     return render_template('edit_profile.html', title='Edit Profile', form=form)
 
 
@@ -168,7 +183,8 @@ def logout_page():
 @app.route('/', methods=['GET', 'POST'])
 def index():
     formupload = UploadForm()
-    return render_template('index.html', formupload=formupload)
+    latest_events = Event.query.order_by(Event.date_posted.desc()).limit(3).all()
+    return render_template('index.html', formupload=formupload, events=latest_events)
 
 
 def allowed_file(filename):
@@ -189,6 +205,9 @@ def post_events():
         owner = event_owner
         category = Category.query.get_or_404(
             formupload.category.data.id)
+        music_type = Music.query.get_or_404(
+            formupload.music_type.data.id
+        )
         title = formupload.title.data
         price = formupload.price.data
         address = formupload.address.data
@@ -198,9 +217,9 @@ def post_events():
             filename = secure_filename(image.filename)
             image.save(os.path.join(app.config['UPLOADED_PHOTOS_DEST'], filename))
 
-        events = Event(owner,title,
+        events = Event(owner, title,
                        price,
-                       address, category, filename)
+                       address, category, music_type, filename)
         db.session.add(events)
         db.session.commit()
         flash('Event Posted!')
@@ -214,15 +233,19 @@ def post_events():
 @app.route('/event/<int:event_id>')
 def event(event_id):
     _event = Event.query.get_or_404(event_id)
-    return render_template('event_own.html', title=_event.title, _event=_event)  # specific event
+    comments = Comment.query.filter_by(event_id=event_id)
+    user = current_user
+    return render_template('show_event.html', title=_event.title, event=_event, comments=comments)  # specific event
 
 
 @app.route("/event/<int:event_id>/update", methods=['GET', 'POST'])  # specific event edit
 @login_required
 def update_event(event_id):
     _event = Event.query.get_or_404(event_id)
-    if _event.owner != current_user:
+
+    if _event.owner != current_user.username:
         abort(403)
+
     formupload = UploadForm()
     if formupload.validate_on_submit():
         _event.category = Category.query.get_or_404(
@@ -230,17 +253,23 @@ def update_event(event_id):
         _event.title = formupload.title.data
         _event.price = formupload.price.data
         _event.address = formupload.address.data
+        _event.music = Music.query.get_or_404(
+            formupload.music_type.data.id
+        )
         db.session.commit()
         flash('Your post has been updated!', 'success')
-        return redirect(url_for('post', event_id=_event.id))
+        return redirect(url_for('events_page'))
     elif request.method == 'GET':
         formupload.title.data = _event.title
         formupload.price.data = _event.price
-        formupload.category.data.id = _event.category
-        formupload.address = _event.address
+        formupload.category.data = _event.category
+        # formupload.music.data = _event.music
+        formupload.address.data = _event.address
+        formupload.event_id = event_id
+        formupload.organizer.data = _event.owner
 
-    return render_template('edit_post.html', title='Update Event',
-                           formupload=formupload, legend='Update Event')
+        return render_template('edit_post.html', title='Update Event',
+                               formupload=formupload, legend='Update Event')
 
 
 @app.route("/event/<int:event_id>/delete", methods=['POST'])  # specific event delete
@@ -257,14 +286,15 @@ def delete_event(post_id):
 
 @app.route('/event', methods=['GET', 'POST'])  # main page for events
 def events_page():
-    event = Event.query.all()
+    event = Event.query.order_by(Event.likes.desc()).all()
     return render_template('event.html', event=event)
 
 
 @app.route('/event/followed', methods=['GET', 'POST'])
 @login_required
 def followed_event_page():
-    events = current_user.followed_posts().all()
+    # events = current_user.followed_posts().all()
+    events = current_user.liked_posts()
     return render_template('event_followed.html', events=events)
 
 
@@ -282,6 +312,37 @@ def create_category():  # admin stuff
                                 id=category.id))
     if form.errors: flash(form.errors)
     return render_template('category-create.html', form=form)
+
+
+@app.route('/event/<int:event_id>/like', methods=['GET'])
+def like_event(event_id):
+    _event = Event.query.get_or_404(event_id)
+    if not current_user.is_authenticated:
+        flash('Please log in first', 'warning')
+    elif current_user.like(_event):
+        flash('Liked event!', 'success')
+    else:
+        flash('You already liked this post', 'warning')
+    return redirect(url_for('events_page'))
+
+
+@app.route('/event/<int:event_id>/unlike', methods=['GET'])
+def unlike_event(event_id):
+    _event = Event.query.get_or_404(event_id)
+    current_user.unlike(_event)
+    flash('Unliked event!', 'success')
+    return redirect(url_for('events_page'))
+
+
+@app.route('/event/<int:event_id>/comment', methods=['POST'])
+def add_comment(event_id):
+    comment_text = request.form['comment']
+    event = Event.query.get_or_404(event_id)
+    comment = Comment(comment_text, current_user, event)
+    db.session.add(comment)
+    db.session.commit()
+    flash('Comment submitted!', 'success')
+    return redirect(url_for('event', event_id=event_id))
 
 
 @app.route('/business')
