@@ -23,8 +23,6 @@
                 <div class="col-12">
                     <div class="section-title">
                         <h2 class="wow fadeInUp" data-wow-delay=".4s">{{ title }}</h2>
-                        <p class="wow fadeInUp" data-wow-delay=".6s">There are many variations of passages of Lorem
-                            Ipsum available, but the majority have suffered alteration in some form.</p>
                     </div>
                 </div>
             </div>
@@ -64,7 +62,7 @@
                                     <a href="javascript:void(0)" class="tag">{{ event.music }} </a>
                                     <ul class="rating">
                                         <li><i class="lni lni-heart-filled"></i></li>
-                                        <li><a href="javascript:void(0)">{{ event.likes() }}</a></li>
+                                        <li><a href="javascript:void(0)">{{ event.likes }}</a></li>
                                     </ul>
                                     <ul class="info-list">
                                         <li><a href="javascript:void(0)"><i
@@ -74,7 +72,7 @@
                                 </div>
                                 <div class="bottom-content">
                                     <p class="price">Start From: <span> {{ event.price }}$ </span></p>
-                                    {% if current_user.is_liked(event) %}
+                                    {% if current_user.is_authenticated and current_user.is_liked(event) %}
                                         <a href="{{ url_for('unlike_event', event_id=event.id) }}" class="like"><i
                                                 class="lni lni-heart-filled"></i></a>
                                     {% else %}
