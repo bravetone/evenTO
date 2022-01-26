@@ -107,10 +107,10 @@ def user(username):
 
     if user.role_id == 2:
         events = user.owned_events()
-        print(events)
-        return render_template('event_owner.html', events=events)
+        return render_template('user.html', user=user, role="event_owner", events=events)
     else:
-        return render_template('user.html', user=user, posts=posts,role=role)
+        events = user.liked_posts()
+        return render_template('user.html', user=user, role="user", events=events)
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -178,7 +178,8 @@ def logout_page():
 @app.route('/', methods=['GET', 'POST'])
 def index():
     formupload = UploadForm()
-    return render_template('index.html', formupload=formupload)
+    latest_events = Event.query.order_by(Event.date_posted.desc()).limit(3).all()
+    return render_template('index.html', formupload=formupload, events=latest_events)
 
 
 def allowed_file(filename):
@@ -278,7 +279,7 @@ def delete_event(post_id):
 
 @app.route('/event', methods=['GET', 'POST'])  # main page for events
 def events_page():
-    event = Event.query.all()
+    event = Event.query.order_by(Event.likes.desc()).all()
     return render_template('event.html', event=event)
 
 

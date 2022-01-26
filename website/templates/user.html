@@ -17,35 +17,62 @@
             </div>
         </div>
     </div>
-    <table>
-        <tr valign="top">
-            <td> <img src="{{ user.avatar(128) }}"></td>
-            <td>
-                <h1>{{ user.username }}
-                </h1>
-                <h4>{{ user.role }}
-                </h4>
-                <p>{{ user.followers.count() }} followers, {{ user.followed.count() }}
-                following.</p>
-            </td>
-        </tr>
-    {% if user == current_user %}
-        <p><a href="{{ url_for('edit_profile') }}">Edit your profile</a></p>
-        {% elif not current_user.is_following(user) %}
-        <p><a href="{{ url_for('follow', username=user.username) }}">Follow</a></p>
-    {% else %}
-        <p><a href="{{ url_for('unfollow', username=user.username) }}">Unfollow</a></p>
-    {% endif %}
 
-    </table>
-    <hr>
-    {% for post in posts %}
-    <p>
-    {{ post.author.username }} says: <b>{{ post.body }}</b>
-    </p>
-    {% endfor %}
+    <!-- Start Items Grid Area -->
+    <section id="latest_events" class="items-grid section">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="section-title">
+                        <h2 class="wow fadeInUp" data-wow-delay=".4s">Profile</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center" style="margin-bottom: 100px">
+                <div class="col-2 offset-2">
+                    <img src="{{ user.avatar(128) }}">
+                </div>
+                <div class="col-4">
+                    <h1>{{ user.username }}</h1>
+                    <h4>{{ user.name }} {{ user.family_name }}</h4>
+                    <p>{{ user.followers.count() }} followers, {{ user.followed.count() }}
+                        following.</p>
+                    {% if user == current_user %}
+                        <p><a href="{{ url_for('edit_profile') }}">Edit your profile</a></p>
+                    {% elif not current_user.is_following(user) %}
+                        <p><a href="{{ url_for('follow', username=user.username) }}">Follow</a></p>
+                    {% else %}
+                        <p><a href="{{ url_for('unfollow', username=user.username) }}">Unfollow</a></p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="section-title">
+                        {% if role == "user" %}
+                            <h2 class="wow fadeInUp" data-wow-delay=".4s">Liked Events</h2>
+                        {% elif role == "event_owner" %}
+                            <h2 class="wow fadeInUp" data-wow-delay=".4s">Posted Events</h2>
+                        {% endif %}
+                        <p class="wow fadeInUp" data-wow-delay=".6s">There are many variations of passages of Lorem
+                            Ipsum available, but the majority have suffered alteration in some form.</p>
+                    </div>
+                </div>
+            </div>
 
-{% include "bottom.html" %}
+            <div class="single-head">
+                <div class="row">
+                    {% for evnt in events %}
+                        {% include "event_card.html" %}
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /End Items Grid Area -->
+
+    {% include "bottom.html" %}
 
     <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static',filename='js/wow.min.js') }}"></script>

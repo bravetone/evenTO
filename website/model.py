@@ -5,6 +5,7 @@ from flask_login import UserMixin, AnonymousUserMixin, current_user
 from hashlib import md5
 from website import bcrypt
 from website import db, login_manager
+from sqlalchemy.ext.hybrid import hybrid_property
 
 
 def printf(x):
@@ -15,6 +16,8 @@ followers = db.Table('followers',
                      db.Column('follower_id', db.Integer, db.ForeignKey('users.id')),
                      db.Column('followed_id', db.Integer, db.ForeignKey('users.id'))
                      )
+
+
 # No need to think like user should follow eventowner kind of relation because on the
 # website users will only see the event owners anyway.
 # likes = db.Table('likes',
@@ -61,11 +64,17 @@ class Event(db.Model):
     def __repr__(self):
         return '{}'.format(self.title)
 
+    @hybrid_property
     def likes(self):
         return EventLike.query.filter(
             EventLike.event_id == self.id
         ).count()
 
+    @likes.expression
+    def likes(cls):
+        return db.select([db.func.count(EventLike.user_id)])\
+            .where(EventLike.event_id == cls.id)\
+            .label('total_likes')
 
 
 # eventOwner owns the events
@@ -162,7 +171,6 @@ class User(db.Model, UserMixin):
     def owned_events(self):
         return Event.query.filter(Event.owner == self.username)
 
-
     # def events_owned(self):
     #     events = Event.query.join(User).filter(event.owner == user.id)
 
@@ -193,6 +201,7 @@ class Category(db.Model):
     def __repr__(self):
         return '{}'.format(self.name)
 
+
 class Music(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
@@ -203,9 +212,11 @@ class Music(db.Model):
     def __repr__(self):
         return '{}'.format(self.name)
 
+
 class EventLike(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), primary_key=True)
+
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -220,8 +231,10 @@ class Comment(db.Model):
         self.user = user
         self.event = event
 
+
 def choice_query():
     return Category.query
+
 
 def music_query():
     return Music.query
