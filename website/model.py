@@ -1,8 +1,8 @@
 from datetime import datetime
-
-from flask import current_app
-from flask_login import UserMixin, AnonymousUserMixin, current_user
 from hashlib import md5
+
+from flask_login import UserMixin
+
 from website import bcrypt
 from website import db, login_manager
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -45,11 +45,7 @@ class Event(db.Model):
     category = db.relationship(
         'Category', backref=db.backref('event', lazy='dynamic'))
     music = db.relationship('Music', backref=db.backref('event', lazy='dynamic'))
-
-    # description = db.Column(db.String(length=1024), nullable=True)
-    # date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     image_file = db.Column(db.String(20))
-
     owner = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def __init__(self, owner, title, price, address, category, music, image_file):
@@ -75,7 +71,6 @@ class Event(db.Model):
         return db.select([db.func.count(EventLike.user_id)])\
             .where(EventLike.event_id == cls.id)\
             .label('total_likes')
-
 
 # eventOwner owns the events
 class User(db.Model, UserMixin):

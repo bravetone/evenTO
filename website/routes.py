@@ -10,8 +10,8 @@ from website.form import RegisterForm, SearchForm, UploadForm, LoginForm, Catego
 from website.model import User, Event, Category, Role, Music, Comment
 
 
-# @app.before_first_request
-# def create_db():
+#@app.before_first_request
+#def create_db():
 #    db.drop_all()
 #    db.create_all()
 #    role_user = Role(role_name="User")
